@@ -1,32 +1,18 @@
 <template>
   <div id="app">
+    <GoogleMaps />
   </div>
 </template>
 
 <script>
-import gMaps from './gmaps';
+import GoogleMaps from './components/GoogleMaps.vue'
 
 export default {
   name: 'app',
-  async mounted() {
-    try {
-      const google = await gMaps();
-      const geocoder = new google.maps.Geocoder();
-      const map = new google.maps.Map(this.$el);
-
-      geocoder.geocode({ address: 'Canada' }, (results, status) => {
-        if (status !== 'OK' || !results[0]) {
-          throw new Error(status);
-        }
-
-        map.setCenter(results[0].geometry.location);
-        map.fitBounds(results[0].geometry.viewport);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  },
-};
+  components: {
+    GoogleMaps
+  }
+}
 </script>
 
 <style lang="scss">

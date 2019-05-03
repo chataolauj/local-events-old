@@ -1,4 +1,4 @@
-// src/gmaps.js
+// src/gMaps.js
 
 // Your personal API key.
 // Get it here: https://console.cloud.google.com/google/maps-apis
