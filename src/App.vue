@@ -1,18 +1,23 @@
 <template>
   <div id="app">
-    <Search />
-    <GoogleMaps />
+    <Search id="search-bar"/>
+    <div id="content">
+      <EventList />
+      <GoogleMaps id="google-map"/>
+    </div>
   </div>
 </template>
 
 <script>
 import Search from './components/Search.vue'
+import EventList from './components/EventList.vue'
 import GoogleMaps from './components/GoogleMaps.vue'
 
 export default {
   name: 'app',
   components: {
     Search,
+    EventList,
     GoogleMaps
   }
 }
@@ -32,7 +37,28 @@ export default {
   display: grid;
   grid-template-rows: auto auto;
   grid-template-areas: 
-    "Search"
-    "GoogleMaps";
+    "search"
+    "content";
+}
+
+#content {
+  width: 100vw;
+  height: 100vh;
+  grid-area: 'content';
+  display: grid;
+  grid-template-columns: 25% auto;
+  grid-template-areas: "list" "map";
+}
+
+#search-bar {
+  grid-area: "search";
+}
+
+#event-list {
+  grid-area: "list";
+}
+
+#google-map {
+  grid-area: "map";
 }
 </style>

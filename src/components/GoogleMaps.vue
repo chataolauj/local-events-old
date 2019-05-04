@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import gMaps from '../gMaps.js'
+import gMaps from '../lib/gMaps.js'
 
 export default {
     name: 'GoogleMaps',
@@ -32,7 +32,7 @@ export default {
 
 <style lang="scss" scoped>
 #google-map {
-  width: 100vw;
-  height: 100vh;
+    width: auto;
+    height: 100vh;
 }
 </style>
