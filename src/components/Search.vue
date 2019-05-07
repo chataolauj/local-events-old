@@ -1,27 +1,23 @@
 <template>
     <div id="search-bar">
-        <input v-model="location" type="text" placeholder="Location">
-        <button @click="getEvents">Search</button>
+        <input v-model="location" type="text" placeholder="Location" @keyup.enter="getLocation">
+        <button @click="getLocation">Search</button>
     </div>
 </template>
 
 <script>
-import api from '../lib/API.js'
+//import api from '../lib/API.js'
 
 export default {
     name: "Search",
     data() {
         return {
-            location: null,
-            events: null
+            location: null
         }
     },
     methods: {
-        getEvents() {
-            api.getEvents(this.location).then(results => {
-                console.log(results);
-                this.events = results;
-            })
+        getLocation() {
+            this.$emit("location", this.location);
         }
     }
 }

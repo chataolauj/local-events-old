@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <Search id="search-bar"/>
+    <Search id="search-bar" @location="getEvents"/>
     <div id="content">
-      <EventList />
+      <EventList :events="events"/>
       <GoogleMaps id="google-map"/>
     </div>
   </div>
@@ -12,6 +12,7 @@
 import Search from './components/Search.vue'
 import EventList from './components/EventList.vue'
 import GoogleMaps from './components/GoogleMaps.vue'
+import api from './lib/API.js'
 
 export default {
   name: 'app',
@@ -19,6 +20,19 @@ export default {
     Search,
     EventList,
     GoogleMaps
+  },
+  data() {
+    return {
+      events: null
+    }
+  },
+  methods: {
+    getEvents(location) {
+      api.getEvents(location).then(result => {
+          //console.log(results);
+          this.events = result.data.events.event;
+      })
+    }
   }
 }
 </script>
