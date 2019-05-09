@@ -3,7 +3,7 @@
     <Search id="search-bar" @location="getEvents"/>
     <div id="content">
       <EventList :events="events"/>
-      <GoogleMaps id="google-map"/>
+      <GoogleMaps id="google-map" :events="events"/>
     </div>
   </div>
 </template>
@@ -29,7 +29,7 @@ export default {
   methods: {
     getEvents(location) {
       api.getEvents(location).then(result => {
-          //console.log(results);
+          //console.log(result);
           this.events = result.data.events.event;
       })
     }

@@ -19,7 +19,7 @@ export default {
     },
     watch: {
         events() {
-            console.log(this.events);
+            //console.log(this.events);
             this.eventList = this.events;
         }
     }
