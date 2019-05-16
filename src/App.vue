@@ -29,8 +29,12 @@ export default {
   methods: {
     getEvents(location) {
       api.getEvents(location).then(result => {
-          //console.log(result);
-          this.events = result.data.events.event;
+          try {
+            this.events = result.data.events.event;
+          }
+          catch(error) {
+            console.log(error)
+          }
       })
     }
   }

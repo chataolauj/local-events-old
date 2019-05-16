@@ -38,11 +38,18 @@ export default {
     },
     watch: {
         async events() {
-            //console.log(this.events)
             try {
-                const google =  await gMaps();
+                const google = await gMaps();
 
-                this.locations = this.events.map(event => {
+                if(this.locations !== null) {
+                    for(let i = 0; i < this.locations.length; i++) {
+                        this.locations[i].setMap(null);
+                    }
+
+                    this.locations = [];
+                }
+
+                this.locations = this.events.map(event => 
                     new google.maps.Marker({
                         position: {
                             lat: parseInt(event.latitude, 10),
@@ -51,7 +58,7 @@ export default {
                         map: this.map,
                         title: event.title
                     })
-                })
+                )
             }
             catch(error) {
                 console.error(error)
