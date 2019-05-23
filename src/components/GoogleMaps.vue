@@ -6,6 +6,7 @@
 
 <script>
 import gMaps from '../lib/gMaps.js'
+//import OMS from '../lib/oms.js'
 
 export default {
     name: 'GoogleMaps',
@@ -41,6 +42,14 @@ export default {
             try {
                 const google = await gMaps();
 
+                //OverlappingMarkerSpiderfier not defined might cause future problems
+                // eslint-disable-next-line
+                var oms = new OverlappingMarkerSpiderfier(this.map, {
+                    markersWontMove: true,
+                    markersWontHide: true,
+                    basicFormatEvents: true
+                });
+
                 if(this.locations !== null) {
                     for(let i = 0; i < this.locations.length; i++) {
                         this.locations[i].setMap(null);
@@ -49,16 +58,31 @@ export default {
                     this.locations = [];
                 }
 
-                this.locations = this.events.map(event => 
-                    new google.maps.Marker({
+                let bounds = new google.maps.LatLngBounds();
+                let infoWindow = new google.maps.InfoWindow();
+
+                this.locations = this.events.map(event => {
+                    let marker = new google.maps.Marker({
                         position: {
                             lat: parseInt(event.latitude, 10),
                             lng: parseInt(event.longitude, 10)
                         },
-                        map: this.map,
                         title: event.title
-                    })
-                )
+                    });
+
+                    google.maps.event.addListener(marker, 'spider_click', function() {
+                        infoWindow.setContent(event.description || "No description available.");
+                        infoWindow.open(this.map, marker);
+                    });
+
+                    bounds.extend(marker.position);
+
+                    oms.addMarker(marker);
+
+                    return marker;
+                })
+
+                this.map.fitBounds(bounds);
             }
             catch(error) {
                 console.error(error)

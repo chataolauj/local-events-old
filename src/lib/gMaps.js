@@ -38,5 +38,11 @@ export default function init() {
   script.onerror = rejectInitPromise;
   document.querySelector('head').appendChild(script);
 
+  const spiderfier = document.createElement('script');
+  spiderfier.defer = true;
+  spiderfier.src = "https://cdnjs.cloudflare.com/ajax/libs/OverlappingMarkerSpiderfier/1.0.3/oms.min.js";
+  spiderfier.onerror = rejectInitPromise;
+  document.querySelector('head').appendChild(spiderfier);
+
   return initPromise;
 }
