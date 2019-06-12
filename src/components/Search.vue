@@ -6,7 +6,6 @@
 </template>
 
 <script>
-//import api from '../lib/API.js'
 
 export default {
     name: "Search",
@@ -25,12 +24,10 @@ export default {
 
 <style lang="scss" scoped>
 #search-bar {
-    width: 100vw;
-    height: 5vh;
-    background-color: gray;
+    background-color: #E8E5E5;
     display: flex;
     flex-direction: row;
-    //justify-content: space-evenly;
+    justify-content: center;
 
     input[type="text"] {
         width: 30%;

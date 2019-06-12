@@ -2,8 +2,8 @@
   <div id="app">
     <Search id="search-bar" @location="getEvents"/>
     <div id="content">
-      <EventList :events="events"/>
-      <GoogleMaps id="google-map" :events="events"/>
+      <EventList id="event-list" @markerIndex="getMarkerIndex" :events="events"/>
+      <GoogleMaps id="google-map" :events="events" :markerIndex="markerIndex"/>
     </div>
   </div>
 </template>
@@ -23,7 +23,9 @@ export default {
   },
   data() {
     return {
-      events: null
+      events: null,
+      markers: null,
+      markerIndex: null
     }
   },
   methods: {
@@ -36,6 +38,9 @@ export default {
             console.log(error)
           }
       })
+    },
+    getMarkerIndex(markerIndex) {
+      this.markerIndex = markerIndex;
     }
   }
 }
@@ -61,15 +66,17 @@ export default {
 
 #content {
   width: 100vw;
-  height: 100vh;
+  height: 95vh;
   grid-area: 'content';
   display: grid;
-  grid-template-columns: 25% auto;
+  grid-template-columns: 2.5fr 7.5fr;
   grid-template-areas: "list" "map";
 }
 
 #search-bar {
   grid-area: "search";
+  width: 100vw;
+  height: 5vh;
 }
 
 #event-list {
@@ -78,5 +85,6 @@ export default {
 
 #google-map {
   grid-area: "map";
+  height: 95vh;
 }
 </style>
