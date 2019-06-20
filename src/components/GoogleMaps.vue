@@ -72,7 +72,7 @@ export default {
                 });
 
                 marker.addListener('spider_click', function() {
-                    infoWindow.setContent(event.description || "No description available.");
+                    infoWindow.setContent(event.title || "No title.");
                     infoWindow.open(this.map, marker);
                 });
 
@@ -96,5 +96,6 @@ export default {
 
 <style lang="scss" scoped>
 #google-map {
+    
 }
 </style>

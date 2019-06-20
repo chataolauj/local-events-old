@@ -76,15 +76,16 @@ export default {
 #search-bar {
   grid-area: "search";
   width: 100vw;
-  height: 5vh;
+  height: 7vh;
 }
 
 #event-list {
   grid-area: "list";
+  height: 93vh;
 }
 
 #google-map {
   grid-area: "map";
-  height: 95vh;
+  height: 93vh;
 }
 </style>
