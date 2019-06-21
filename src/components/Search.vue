@@ -4,6 +4,7 @@
             <input v-model="location" type="text" placeholder="Search location or postal code" @keyup.enter="getLocation">
             <span class="fa fa-search" @click="getLocation"></span>
         </div>
+        <span class="fa fa-filter"></span>
     </div>
 </template>
 
@@ -13,12 +14,14 @@ export default {
     name: "Search",
     data() {
         return {
-            location: null
+            location: null,
+            loading: true
         }
     },
     methods: {
         getLocation() {
             this.$emit("location", this.location);
+            this.$emit("loading", this.loading);
         }
     }
 }
@@ -37,17 +40,18 @@ $primaryThree: #e1e8f0;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    transition: all 0.1s ease-in-out;
 
     #input-design {
         position: relative;
         width: 30%;
+        margin-right: 5px;
         display: flex;
         flex-direction: row;
         align-items: center;
 
         input[type="text"] {
             width: 100%;
+            //font-size: 15px;
             padding: 5px;
             outline: none;
             border: 2px solid white;
@@ -56,16 +60,18 @@ $primaryThree: #e1e8f0;
 
             &:hover {
                 box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .3);
+                transition: .2s ease-in-out;
             }
 
             &:focus {
-                //border-color: $primaryTwo;
+                //border-color: $primaryOne;
                 box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .3);
             }
         }
 
         .fa-search {
             position: absolute;
+            font-size: 20px;
             color: $primaryOne;
             background: none;
             outline: none;
@@ -75,7 +81,18 @@ $primaryThree: #e1e8f0;
             &:hover {
                 cursor: pointer;
                 color: $primaryTwo;
+                transition: color .2s ease-in-out;
             }
+        }
+    }
+
+    .fa-filter {
+        font-size: 20px;
+
+        &:hover {
+            cursor: pointer;
+            color: $primaryTwo;
+            transition: color .2s ease-in-out;
         }
     }
 }

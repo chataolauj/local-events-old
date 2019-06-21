@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <Search id="search-bar" @location="getEvents"/>
+    <Search id="search-bar" @location="getEvents" @loading="isLoading"/>
     <div id="content">
-      <EventList id="event-list" @markerIndex="getMarkerIndex" :events="events"/>
+      <EventList id="event-list" @loading="isLoading" @markerIndex="getMarkerIndex" :isLoading="loading" :events="events"/>
       <GoogleMaps id="google-map" :events="events" :markerIndex="markerIndex"/>
     </div>
   </div>
@@ -23,8 +23,8 @@ export default {
   },
   data() {
     return {
+      loading: null,
       events: null,
-      markers: null,
       markerIndex: null
     }
   },
@@ -41,6 +41,10 @@ export default {
     },
     getMarkerIndex(markerIndex) {
       this.markerIndex = markerIndex;
+    },
+    isLoading(loading) {
+      console.log("hits isLoading() in App.vue")
+      this.loading = loading;
     }
   }
 }
