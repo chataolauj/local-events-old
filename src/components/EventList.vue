@@ -1,13 +1,15 @@
 <template>
     <div id="event-list">
-        <h3 id="no-results" v-if="!this.loading && this.eventList == null">No results...</h3>
-        <!-- <div v-if="this.loading" class="loader"></div> -->
+        <h3 id="no-results" v-if="!this.loading && this.eventList == null && !this.nullEvent">No results...</h3>
         <div class="loader" v-if="this.loading">
             <svg class="circular" viewBox="25 25 50 50">
             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
             </svg>
         </div>
-        <ul v-if="!this.loading">
+        <h3 id="no-results" v-if="!this.loading && this.nullEvent">
+            Could not find events for location/postal code of {{this.location}}
+        </h3>
+        <ul v-if="!this.loading && !this.nullEvent">
             <li @click="setMarkerIndex(index)" v-for="(event, index) in eventList" :item="event" :key="index">
                 <h4>{{event.title}}</h4>
                 <p><i class="fas fa-map-marker-alt"></i> {{event.venue_address}}, {{event.city_name}}, {{event.region_abbr}}</p>
@@ -22,12 +24,15 @@
 export default {
     props: {
         events: Array,
-        isLoading: Boolean
+        isLoading: Boolean,
+        location: String,
+        isEventNull: Boolean,
     },
     data() {
         return {
-            eventList: null,
             loading: null,
+            nullEvent: null,
+            eventList: null
         }
     },
     methods: {
@@ -48,13 +53,14 @@ export default {
     },
     watch: {
         events() {
-            console.log("hits events() in EventList.vue")
             this.eventList = this.events;
             this.$emit("loading", this.loading = false);
         },
         isLoading() {
-            console.log("hits isLoading() in EventList.vue")
             this.loading = this.isLoading;
+        },
+        isEventNull() {
+            this.nullEvent = this.isEventNull;
         }
     }
 }
@@ -63,6 +69,7 @@ export default {
 <style lang="scss" scoped>
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.css");
 
+$width: 100px;
 $primaryOne: #FF3B3F;
 $primaryTwo: #51d0de;
 $primaryThree: #e1e8f0;
@@ -75,6 +82,8 @@ $primaryThree: #e1e8f0;
     #no-results {
         align-self: center;
         margin: auto;
+        text-align: center;
+        max-width: 90%;
     }
 
     li {
@@ -103,70 +112,6 @@ $primaryThree: #e1e8f0;
             color: black;
         }
     }
-
-    /* .loader,
-    .loader:before,
-    .loader:after {
-        align-self: center;
-        justify-self: center;
-        background: $primaryOne;
-        -webkit-animation: load1 1s infinite ease-in-out;
-        animation: load1 1s infinite ease-in-out;
-        width: 1em;
-        height: 4em;
-    }
-    .loader {
-        color: $primaryOne;
-        text-indent: -9999em;
-        margin: 88px auto;
-        position: relative;
-        font-size: 11px;
-        -webkit-transform: translateZ(0);
-        -ms-transform: translateZ(0);
-        transform: translateZ(0);
-        -webkit-animation-delay: -0.16s;
-        animation-delay: -0.16s;
-    }
-    .loader:before,
-    .loader:after {
-        position: absolute;
-        top: 0;
-        content: '';
-    }
-    .loader:before {
-        left: -1.5em;
-        -webkit-animation-delay: -0.32s;
-        animation-delay: -0.32s;
-    }
-    .loader:after {
-        left: 1.5em;
-    }
-    @-webkit-keyframes load1 {
-        0%,
-        80%,
-        100% {
-            box-shadow: 0 0;
-            height: 4em;
-        }
-        40% {
-            box-shadow: 0 -2em;
-            height: 5em;
-        }
-    }
-    @keyframes load1 {
-        0%,
-        80%,
-        100% {
-            box-shadow: 0 0;
-            height: 4em;
-        }
-        40% {
-            box-shadow: 0 -2em;
-            height: 5em;
-        }
-    } */
-
-    $width: 100px;
 
     .loader {
         position: relative;

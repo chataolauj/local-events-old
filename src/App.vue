@@ -2,7 +2,13 @@
   <div id="app">
     <Search id="search-bar" @location="getEvents" @loading="isLoading"/>
     <div id="content">
-      <EventList id="event-list" @loading="isLoading" @markerIndex="getMarkerIndex" :isLoading="loading" :events="events"/>
+      <EventList id="event-list" 
+      @loading="isLoading" 
+      @markerIndex="getMarkerIndex" 
+      :location="this.location"
+      :isLoading="this.loading" 
+      :isEventNull="this.isEventNull"
+      :events="events"/>
       <GoogleMaps id="google-map" :events="events" :markerIndex="markerIndex"/>
     </div>
   </div>
@@ -23,9 +29,11 @@ export default {
   },
   data() {
     return {
+      location: null,
       loading: null,
       events: null,
-      markerIndex: null
+      isEventNull: null,
+      markerIndex: null,
     }
   },
   methods: {
@@ -33,9 +41,13 @@ export default {
       api.getEvents(location).then(result => {
           try {
             this.events = result.data.events.event;
+            this.$emit("isEventNull", this.isEventNull = false);
           }
           catch(error) {
             console.log(error)
+            this.loading = false;
+            this.isEventNull = true;
+            this.location = location;
           }
       })
     },
@@ -43,7 +55,6 @@ export default {
       this.markerIndex = markerIndex;
     },
     isLoading(loading) {
-      console.log("hits isLoading() in App.vue")
       this.loading = loading;
     }
   }
