@@ -1,13 +1,15 @@
 <template>
     <div id="event-list">
-        <h3 id="no-results" v-if="!this.loading && this.eventList == null && !this.nullEvent">No results...</h3>
+        <h3 id="no-results" v-if="!this.loading && this.eventList == null && !this.nullEvent">
+            Search for a location or postal code to obtain results.
+        </h3>
         <div class="loader" v-if="this.loading">
             <svg class="circular" viewBox="25 25 50 50">
             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
             </svg>
         </div>
         <h3 id="no-results" v-if="!this.loading && this.nullEvent">
-            Could not find events for location/postal code of {{this.location}}
+            Could not find events for the location or postal code you searched for.
         </h3>
         <ul v-if="!this.loading && !this.nullEvent">
             <li @click="setMarkerIndex(index)" v-for="(event, index) in eventList" :item="event" :key="index">
@@ -22,10 +24,10 @@
 
 <script>
 export default {
+    name: "EventList",
     props: {
         events: Array,
         isLoading: Boolean,
-        location: String,
         isEventNull: Boolean,
     },
     data() {
@@ -54,7 +56,7 @@ export default {
     watch: {
         events() {
             this.eventList = this.events;
-            this.$emit("loading", this.loading = false);
+            this.$emit("loading", false);
         },
         isLoading() {
             this.loading = this.isLoading;

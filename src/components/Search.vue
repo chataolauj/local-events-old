@@ -1,10 +1,30 @@
 <template>
     <div id="search-bar">
-        <div id="input-design">
-            <input v-model="location" type="text" placeholder="Search location or postal code" @keyup.enter="getLocation">
-            <span class="fa fa-search" @click="getLocation"></span>
+        <div style="width: 20%">
+            <div class="search-design">
+                <span class="fa fa-search" @click="setParameters"></span>
+                <input class="search-input" v-model="search_parameters.location" type="text" placeholder="Search location" @keyup.enter="setParameters">
+            </div>
         </div>
-        <span class="fa fa-filter"></span>
+        <div class="search-design">
+            <span class="fas fa-calendar-alt icon"></span>
+            <select class="search-selected" v-model="search_parameters.date">
+                <option value="All">All</option>
+                <option value="Today">Today</option>
+                <option value="This Week">This Week</option>
+                <option value="Next Week">Next Week</option>
+            </select>
+        </div>
+        <div class="search-design">
+            <span class="fa fa-road icon"></span>
+            <select class="search-selected" v-model="search_parameters.within">
+                <option value="5">5 mi</option>
+                <option value="10">10 mi</option>
+                <option value="25">25 mi</option>
+                <option value="50">50 mi</option>
+            </select>
+        </div>
+        <button id="search-button" @click="setParameters">Search</button>
     </div>
 </template>
 
@@ -14,14 +34,16 @@ export default {
     name: "Search",
     data() {
         return {
-            location: null,
-            loading: true
+            search_parameters: {
+                location: null,
+                date: null,
+                within: null
+            }
         }
     },
     methods: {
-        getLocation() {
-            this.$emit("location", this.location);
-            this.$emit("loading", this.loading);
+        setParameters() {
+            this.$emit("search_parameters", this.search_parameters);
         }
     }
 }
@@ -41,59 +63,85 @@ $primaryThree: #e1e8f0;
     align-items: center;
     justify-content: center;
 
-    #input-design {
+    .search-design {
         position: relative;
-        width: 30%;
+        background-color: white;
+        border: 1px solid white;
+        border-radius: 5px;
         margin-right: 5px;
         display: flex;
         flex-direction: row;
         align-items: center;
 
-        input[type="text"] {
-            width: 100%;
-            //font-size: 15px;
-            padding: 5px;
-            outline: none;
-            border: 2px solid white;
-            border-radius: 50px;
-            text-indent: 10px;
-
-            &:hover {
-                box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .3);
-                transition: .2s ease-in-out;
-            }
-
-            &:focus {
-                //border-color: $primaryOne;
-                box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .3);
-            }
+        &:hover {
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .3);
+            transition: .2s ease-in-out;
         }
 
-        .fa-search {
-            position: absolute;
-            font-size: 20px;
-            color: $primaryOne;
-            background: none;
-            outline: none;
-            border: none;
-            right: 15px;
-
-            &:hover {
-                cursor: pointer;
-                color: $primaryTwo;
-                transition: color .2s ease-in-out;
-            }
+        &:focus-within {
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .3);
         }
     }
 
-    .fa-filter {
-        font-size: 20px;
+    .search-input {
+        width: 93%;
+        padding: 5px;
+        outline: none;
+        border: 2px solid white;
+        border-radius: 5px;
+        margin-left: 30px;
+    }
+
+    .search-selected {
+        width: 93%;
+        padding: 5px;
+        outline: none;
+        border: 2px solid white;
+        border-radius: 5px;
+        margin-left: 25px;
+    }
+
+    #search-button {
+        padding: 6.7px;
+        border: 2px solid $primaryThree;
+        border-radius: 5px;
+        background-color: $primaryThree;
+        outline: none;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        &:active {
+            background-color: $primaryTwo;
+            border-color: $primaryTwo;
+        }
+    }
+
+    .fa-search {
+        position: absolute;
+        font-size: 15px;
+        color: $primaryOne;
+        background: none;
+        outline: none;
+        border: none;
+        left: 10px;
 
         &:hover {
             cursor: pointer;
             color: $primaryTwo;
-            transition: color .2s ease-in-out;
+            transition: .2s ease-in-out;
         }
+    }
+
+    .icon {
+        position: absolute;
+        font-size: 15px;
+        color: $primaryOne;
+        background: none;
+        outline: none;
+        border: none;
+        left: 10px;
     }
 }
 </style>

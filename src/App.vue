@@ -1,11 +1,10 @@
 <template>
   <div id="app">
-    <Search id="search-bar" @location="getEvents" @loading="isLoading"/>
+    <Search id="search-bar" @search_parameters="getEvents"/>
     <div id="content">
       <EventList id="event-list" 
       @loading="isLoading" 
       @markerIndex="getMarkerIndex" 
-      :location="this.location"
       :isLoading="this.loading" 
       :isEventNull="this.isEventNull"
       :events="events"/>
@@ -29,7 +28,6 @@ export default {
   },
   data() {
     return {
-      location: null,
       loading: null,
       events: null,
       isEventNull: null,
@@ -37,17 +35,19 @@ export default {
     }
   },
   methods: {
-    getEvents(location) {
-      api.getEvents(location).then(result => {
+    getEvents(search_parameters) {
+      console.log(search_parameters)
+      this.loading = true;
+      api.getEvents(search_parameters).then(result => {
           try {
+            console.log(result.data)
             this.events = result.data.events.event;
-            this.$emit("isEventNull", this.isEventNull = false);
+            this.isEventNull = false;
           }
           catch(error) {
             console.log(error)
             this.loading = false;
             this.isEventNull = true;
-            this.location = location;
           }
       })
     },
