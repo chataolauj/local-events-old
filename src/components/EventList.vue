@@ -75,7 +75,12 @@ export default {
         },
         formatTime(eventDate) {
             let date = new Date(eventDate);
-            return date.getUTCHours;
+            let hour = date.getHours();
+            let minutes = date.getMinutes();
+
+            return (hour > 12 ? date.getHours() - 12 : 12) + ":"
+             + (minutes < 10 ? '0' + minutes : minutes)
+             + (date.getHours() < 12 ? ' AM' : ' PM');
         }
     },
     watch: {
@@ -137,6 +142,10 @@ $primaryThree: #e1e8f0;
             cursor: pointer;
             background-color: rgba(81, 208, 222, .5);
             color: black;
+        }
+
+        &:active {
+            background-color: rgba(81, 208, 222, .5);
         }
     }
 

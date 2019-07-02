@@ -36,8 +36,8 @@ export default {
   },
   methods: {
     getEvents(search_parameters) {
-      console.log(search_parameters)
       this.loading = true;
+      
       api.getEvents(search_parameters).then(result => {
           try {
             console.log(result.data)

@@ -72,7 +72,7 @@ export default {
                 });
 
                 marker.addListener('spider_click', function() {
-                    infoWindow.setContent(event.description || "No title.");
+                    infoWindow.setContent(event.description || "No description.");
                     infoWindow.open(this.map, marker);
                 });
 
