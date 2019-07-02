@@ -1,6 +1,6 @@
 <template>
     <div id="event-list">
-        <h3 id="no-results" v-if="!this.loading && this.eventList == null && !this.nullEvent">
+        <h3 class="no-results" v-if="!this.loading && this.eventList == null && !this.nullEvent">
             Search for a location or postal code to obtain results.
         </h3>
         <div class="loader" v-if="this.loading">
@@ -8,17 +8,22 @@
             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
             </svg>
         </div>
-        <h3 id="no-results" v-if="!this.loading && this.nullEvent">
+        <h3 class="no-results" v-if="!this.loading && this.nullEvent">
             Could not find events for the location or postal code you searched for.
         </h3>
         <ul v-if="!this.loading && !this.nullEvent">
-            <li @click="setMarkerIndex(index)" v-for="(event, index) in eventList" :item="event" :key="index">
+            <li @click="setMarkerIndex(index); showDetails(event)" v-for="(event, index) in eventList" :item="event" :key="index">
                 <h4>{{event.title}}</h4>
                 <p><i class="fas fa-map-marker-alt"></i> {{event.venue_address}}, {{event.city_name}}, {{event.region_abbr}}</p>
                 <p><i class="fas fa-calendar-day"></i> {{event.start_time | formatDate(event.start_time)}}</p>
                 <p><i class="fas fa-clock"></i> {{event.start_time | formatTime(event.start_time)}}</p>
             </li>
         </ul>
+        <!-- <div id="event-details" v-if="eventClicked">
+            <span class="fas fa-arrow-left" @click="hideDetails"></span>
+            <h3>{{this.event_title}}</h3>
+            <p>{{this.event_description}}</p>
+        </div> -->
     </div>
 </template>
 
@@ -34,13 +39,33 @@ export default {
         return {
             loading: null,
             nullEvent: null,
-            eventList: null
+            eventList: null,
+            //eventClicked: false,
+            event_title: null,
+            event_description: null,
+            event_venue_address: null,
+            event_city_name: null,
+            event_region_abbr: null,
+            event_start_time: null,
         }
     },
     methods: {
         setMarkerIndex(index) {
             //send index to App.vue then to GoogleMaps component
             this.$emit("markerIndex", index);
+        },
+        showDetails(event) {
+            this.eventClicked = true;
+            this.event_title = event.title;
+            this.event_description = event.description;
+            this.event_image = event.image;
+            this.event_venue_address = event.venue_address;
+            this.event_city_name = event.city_name;
+            this.event_region_abbr = event.reggion_abbr;
+            this.event_start_time = event.start_time;
+        },
+        hideDetails() {
+            this.eventClicked = false;
         }
     },
     filters: {
@@ -81,7 +106,7 @@ $primaryThree: #e1e8f0;
     display: flex;
     background-color: white;
 
-    #no-results {
+    .no-results {
         align-self: center;
         margin: auto;
         text-align: center;
@@ -114,6 +139,18 @@ $primaryThree: #e1e8f0;
             color: black;
         }
     }
+
+    /* #event-details {
+        width: 100%;
+        height: 100%;
+        background-color: $primaryTwo;
+
+        .fa-arrow-left {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    } */
 
     .loader {
         position: relative;

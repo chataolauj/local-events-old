@@ -72,7 +72,7 @@ export default {
                 });
 
                 marker.addListener('spider_click', function() {
-                    infoWindow.setContent(event.title || "No title.");
+                    infoWindow.setContent(event.description || "No title.");
                     infoWindow.open(this.map, marker);
                 });
 
@@ -88,7 +88,7 @@ export default {
         markerIndex() {
             let clicked_marker = this.locations[this.markerIndex];
             
-            this.google.maps.event.trigger(clicked_marker, 'click');
+            this.google.maps.event.trigger(clicked_marker, 'spider_click');
         }
     }
 }
