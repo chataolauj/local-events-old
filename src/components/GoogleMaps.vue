@@ -25,7 +25,9 @@ export default {
         try {
             this.google = await gMaps();
             const geocoder = new this.google.maps.Geocoder();
-            this.map = new this.google.maps.Map(this.$el);
+            this.map = new this.google.maps.Map(this.$el, {
+                zoom: 4
+            });
 
             geocoder.geocode({ address: 'USA'}, (results, status) => {
                 if (status !== 'OK' || !results[0]) {
@@ -60,7 +62,7 @@ export default {
             }
 
             let bounds = new this.google.maps.LatLngBounds();
-            let infoWindow = new this.google.maps.InfoWindow()
+            let infoWindow = new this.google.maps.InfoWindow();
 
             this.locations = this.events.map(event => {
                 let marker = new this.google.maps.Marker({

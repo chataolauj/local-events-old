@@ -104,17 +104,19 @@ $primaryThree: #e1e8f0;
     #search-button {
         padding: 6.7px;
         border: 2px solid $primaryThree;
-        border-radius: 5px;
         background-color: $primaryThree;
+        border-radius: 5px;
         outline: none;
 
         &:hover {
             cursor: pointer;
+            background-color: $primaryTwo;
+            border-color: $primaryTwo;
         }
 
         &:active {
             background-color: $primaryTwo;
-            border-color: $primaryTwo;
+            border-color: $primaryOne;
         }
     }
 

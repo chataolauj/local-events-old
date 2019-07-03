@@ -3,16 +3,16 @@
         <h3 class="no-results" v-if="!this.loading && this.eventList == null && !this.nullEvent">
             Search for a location or postal code to obtain results.
         </h3>
-        <div class="loader" v-if="this.loading">
+        <div class="loader" v-else-if="this.loading">
             <svg class="circular" viewBox="25 25 50 50">
             <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
             </svg>
         </div>
-        <h3 class="no-results" v-if="!this.loading && this.nullEvent">
+        <h3 class="no-results" v-else-if="!this.loading && this.nullEvent">
             Could not find events for the location or postal code you searched for.
         </h3>
-        <ul v-if="!this.loading && !this.nullEvent">
-            <li @click="setMarkerIndex(index); showDetails(event)" v-for="(event, index) in eventList" :item="event" :key="index">
+        <ul style="width: 100%;" v-else>
+            <li :class="{active: index == active_item}" @click="setMarkerIndex(index); setItemActive(index);" v-for="(event, index) in eventList" :item="event" :key="index">
                 <h4>{{event.title}}</h4>
                 <p><i class="fas fa-map-marker-alt"></i> {{event.venue_address}}, {{event.city_name}}, {{event.region_abbr}}</p>
                 <p><i class="fas fa-calendar-day"></i> {{event.start_time | formatDate(event.start_time)}}</p>
@@ -33,20 +33,21 @@ export default {
     props: {
         events: Array,
         isLoading: Boolean,
-        isEventNull: Boolean,
+        isEventNull: Boolean
     },
     data() {
         return {
             loading: null,
             nullEvent: null,
             eventList: null,
-            //eventClicked: false,
+            active_item: null,
+            /* eventClicked: false,
             event_title: null,
             event_description: null,
             event_venue_address: null,
             event_city_name: null,
             event_region_abbr: null,
-            event_start_time: null,
+            event_start_time: null, */
         }
     },
     methods: {
@@ -54,7 +55,10 @@ export default {
             //send index to App.vue then to GoogleMaps component
             this.$emit("markerIndex", index);
         },
-        showDetails(event) {
+        setItemActive(index) {
+            this.active_item = index;
+        }
+        /* showDetails(event) {
             this.eventClicked = true;
             this.event_title = event.title;
             this.event_description = event.description;
@@ -63,10 +67,10 @@ export default {
             this.event_city_name = event.city_name;
             this.event_region_abbr = event.reggion_abbr;
             this.event_start_time = event.start_time;
-        },
+        }, 
         hideDetails() {
             this.eventClicked = false;
-        }
+        }*/
     },
     filters: {
         formatDate(eventDate) {
@@ -78,9 +82,9 @@ export default {
             let hour = date.getHours();
             let minutes = date.getMinutes();
 
-            return (hour > 12 ? date.getHours() - 12 : 12) + ":"
+            return (hour > 12 ? hour - 12 : 12) + ":" //if false (hour = 0), then set to 12
              + (minutes < 10 ? '0' + minutes : minutes)
-             + (date.getHours() < 12 ? ' AM' : ' PM');
+             + (hour < 12 ? ' AM' : ' PM');
         }
     },
     watch: {
@@ -90,6 +94,7 @@ export default {
         },
         isLoading() {
             this.loading = this.isLoading;
+            this.active_item = null;
         },
         isEventNull() {
             this.nullEvent = this.isEventNull;
@@ -138,13 +143,21 @@ $primaryThree: #e1e8f0;
             }
         }
 
-        &:hover {
-            cursor: pointer;
+        .active {
             background-color: rgba(81, 208, 222, .5);
-            color: black;
         }
 
-        &:active {
+        &:hover {
+            cursor: pointer;
+            background-color: $primaryThree;
+            color: black;
+        }
+    }
+
+    .active {
+        background-color: rgba(81, 208, 222, .5);
+
+        &:hover {
             background-color: rgba(81, 208, 222, .5);
         }
     }

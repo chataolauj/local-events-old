@@ -7,8 +7,8 @@
       @markerIndex="getMarkerIndex" 
       :isLoading="this.loading" 
       :isEventNull="this.isEventNull"
-      :events="events"/>
-      <GoogleMaps id="google-map" :events="events" :markerIndex="markerIndex"/>
+      :events="this.events"/>
+      <GoogleMaps id="google-map" :events="events" :markerIndex="this.markerIndex"/>
     </div>
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
       loading: null,
       events: null,
       isEventNull: null,
-      markerIndex: null,
+      markerIndex: null
     }
   },
   methods: {
@@ -51,11 +51,11 @@ export default {
           }
       })
     },
-    getMarkerIndex(markerIndex) {
-      this.markerIndex = markerIndex;
-    },
     isLoading(loading) {
       this.loading = loading;
+    },
+    getMarkerIndex(markerIndex) {
+      this.markerIndex = markerIndex;
     }
   }
 }
