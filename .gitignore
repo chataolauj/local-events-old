@@ -1,9 +1,6 @@
 .DS_Store
 node_modules
 
-#API keys
-api_keys.*
-
 # local env files
 .env.local
 .env.*.local
