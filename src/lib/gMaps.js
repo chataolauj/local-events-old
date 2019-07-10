@@ -3,7 +3,7 @@ import api_keys from './api_keys'
 
 // Your personal API key.
 // Get it here: https://console.cloud.google.com/google/maps-apis
-const API_KEY = process.env.google_maps_api_key || api_keys.google_maps_api_key;
+const API_KEY = process.env.google_maps_api_key /* || api_keys.google_maps_api_key */;
 const CALLBACK_NAME = 'gmapsCallback';
 
 let initialized = !!window.google;
