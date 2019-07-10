@@ -2,7 +2,7 @@
 
 // Your personal API key.
 // Get it here: https://console.cloud.google.com/google/maps-apis
-const API_KEY = process.env.VUE_APP_GOOGLE_MAPS_KEY || process.env.google_maps_api_key;
+const API_KEY = process.env.google_maps_api_key || process.env.VUE_APP_GOOGLE_MAPS_KEY;
 const CALLBACK_NAME = 'gmapsCallback';
 
 let initialized = !!window.google;
