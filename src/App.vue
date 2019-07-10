@@ -91,16 +91,16 @@ export default {
 #search-bar {
   grid-area: "search";
   width: 100vw;
-  height: 7vh;
+  height: 10vh;
 }
 
 #event-list {
   grid-area: "list";
-  height: 93vh;
+  height: 90vh;
 }
 
 #google-map {
   grid-area: "map";
-  height: 93vh;
+  height: 90vh;
 }
 </style>

@@ -2,13 +2,13 @@
     <div id="search-bar">
         <div style="width: 20%">
             <div class="search-design">
-                <span class="fa fa-search" @click="setParameters"></span>
+                <span class="fa fa-search icon" @click="setParameters"></span>
                 <input class="search-input" v-model="search_parameters.location" type="text" placeholder="Search location" @keyup.enter="setParameters">
             </div>
         </div>
         <div class="search-design">
             <span class="fas fa-calendar-alt icon"></span>
-            <select class="search-selected" v-model="search_parameters.date">
+            <select class="search-select" v-model="search_parameters.date">
                 <option value="All">All</option>
                 <option value="Today">Today</option>
                 <option value="This Week">This Week</option>
@@ -17,7 +17,7 @@
         </div>
         <div class="search-design">
             <span class="fa fa-road icon"></span>
-            <select class="search-selected" v-model="search_parameters.within">
+            <select class="search-select" v-model="search_parameters.within">
                 <option value="5">5 mi</option>
                 <option value="10">10 mi</option>
                 <option value="25">25 mi</option>
@@ -92,7 +92,7 @@ $primaryThree: #e1e8f0;
         margin-left: 30px;
     }
 
-    .search-selected {
+    .search-select {
         width: 93%;
         padding: 5px;
         outline: none;
@@ -120,22 +120,6 @@ $primaryThree: #e1e8f0;
         }
     }
 
-    .fa-search {
-        position: absolute;
-        font-size: 15px;
-        color: $primaryOne;
-        background: none;
-        outline: none;
-        border: none;
-        left: 10px;
-
-        &:hover {
-            cursor: pointer;
-            color: $primaryTwo;
-            transition: .2s ease-in-out;
-        }
-    }
-
     .icon {
         position: absolute;
         font-size: 15px;
@@ -145,5 +129,12 @@ $primaryThree: #e1e8f0;
         border: none;
         left: 10px;
     }
+
+    .fa-search:hover {
+        cursor: pointer;
+        color: $primaryTwo;
+        transition: .2s ease-in-out;
+    }
+
 }
 </style>
