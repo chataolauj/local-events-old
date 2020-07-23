@@ -55,10 +55,10 @@ export default {
 
             if(this.locations !== null) {
                 for(let i = 0; i < this.locations.length; i++) {
-                    this.locations[i].setMap(null);
+                    this.locations[i].setMap(null); //removes markers from previous search
                 }
 
-                this.locations = [];
+                this.locations = []; //emptys array that contained previous search
             }
 
             let bounds = new this.google.maps.LatLngBounds();

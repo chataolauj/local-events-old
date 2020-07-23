@@ -52,7 +52,7 @@ export default {
     },
     methods: {
         setMarkerIndex(index) {
-            //send index to App.vue then to GoogleMaps component
+            //sends index to App.vue, then App.vue sends to GoogleMaps component
             this.$emit("markerIndex", index);
         },
         setItemActive(index) {
