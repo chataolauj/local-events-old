@@ -20,8 +20,7 @@
 			</svg>
 		</div>
 		<h3 class="no-results" v-else-if="!this.loading && this.nullEvent">
-			Could not find events for the location or postal code you searched
-			for.
+			Could not find events based on the search criteria(s).
 		</h3>
 		<ul v-else>
 			<li

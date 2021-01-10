@@ -6,7 +6,7 @@
 					width: !showPanel && !isWindowSmall ? 'auto' : '',
 					height: !showPanel && isWindowSmall ? 'auto' : '',
 				}" -->
-			<div id="hover-panel">
+			<div id="hover-panel" :style="{width: showPanel && !isWindowSmall ? '' : showPanel && isWindowSmall ? '100%' : 'auto'}">
 				<transition name="slide-out">
 					<EventList
 						v-show="showPanel"
@@ -42,7 +42,7 @@
 import Search from "./components/Search.vue";
 import EventList from "./components/EventList.vue";
 import GoogleMaps from "./components/GoogleMaps.vue";
-import api from "./lib/API.js";
+import api from "./lib/eventful.js";
 
 export default {
 	name: "app",
@@ -76,11 +76,15 @@ export default {
 			}
 		},
 		getEvents(search_parameters) {
+            this.showPanel = !this.showPanel;
 			this.loading = true;
 
 			api.getEvents(search_parameters).then((result) => {
 				try {
+					this.loading = false;
+
 					console.log(result.data);
+
 					this.events = result.data.events.event.filter((event) => {
 						let now = new Date();
 						let event_start = new Date(event.start_time);
@@ -89,7 +93,10 @@ export default {
 							return event;
 						}
 					});
-					this.isEventsNull = false;
+
+					this.events.length
+						? (this.isEventsNull = false)
+						: (this.isEventsNull = true);
 				} catch (error) {
 					console.log(error);
 					this.loading = false;
@@ -169,6 +176,7 @@ export default {
 		}
 
 		.toggle-button {
+            //position: absolute;
 			margin-top: 8px;
 			width: 23px;
 			height: 48px;
