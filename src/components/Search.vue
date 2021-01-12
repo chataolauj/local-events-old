@@ -8,6 +8,7 @@
 				type="text"
 				placeholder="Search location"
 				@keyup.enter="setParameters"
+				required
 			/>
 		</div>
 		<div id="date" class="search-parameters">
@@ -38,15 +39,16 @@ export default {
 	data() {
 		return {
 			search_parameters: {
-				location: null,
-				date: null,
-				within: null,
+				location: "",
+				date: "",
+				within: "",
 			},
 		};
 	},
 	methods: {
-		setParameters() {
-			this.$emit("search_parameters", this.search_parameters);
+		async setParameters() {
+			//this.$emit("search_parameters", this.search_parameters);
+			await this.$store.dispatch("getEvents", this.search_parameters);
 		},
 	},
 };

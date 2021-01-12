@@ -1,21 +1,20 @@
 <template>
 	<div id="app">
-		<Search id="search-bar" @search_parameters="getEvents" />
+		<Search id="search-bar" />
 		<div id="content">
-			<!-- :style="{
-					width: !showPanel && !isWindowSmall ? 'auto' : '',
-					height: !showPanel && isWindowSmall ? 'auto' : '',
-				}" -->
-			<div id="hover-panel" :style="{width: showPanel && !isWindowSmall ? '' : showPanel && isWindowSmall ? '100%' : 'auto'}">
+			<div
+				id="hover-panel"
+				:style="{
+					width:
+						showPanel && !isWindowSmall
+							? ''
+							: isWindowSmall
+							? '100%'
+							: 'auto',
+				}"
+			>
 				<transition name="slide-out">
-					<EventList
-						v-show="showPanel"
-						@loading="isLoading"
-						@markerIndex="getMarkerIndex"
-						:isLoading="this.loading"
-						:isEventsNull="this.isEventsNull"
-						:events="this.events"
-					/>
+					<EventList v-show="showPanel" />
 				</transition>
 				<button
 					@click="showPanel = !showPanel"
@@ -33,7 +32,7 @@
 					aria-label="Collapse side panel"
 				></button>
 			</div>
-			<GoogleMaps :events="this.events" :markerIndex="this.markerIndex" />
+			<GoogleMaps />
 		</div>
 	</div>
 </template>
@@ -42,7 +41,6 @@
 import Search from "./components/Search.vue";
 import EventList from "./components/EventList.vue";
 import GoogleMaps from "./components/GoogleMaps.vue";
-import api from "./lib/eventful.js";
 
 export default {
 	name: "app",
@@ -55,10 +53,6 @@ export default {
 		return {
 			isWindowSmall: null,
 			showPanel: true,
-			loading: null,
-			events: null,
-			isEventsNull: null,
-			markerIndex: null,
 		};
 	},
 	mounted() {
@@ -74,41 +68,6 @@ export default {
 			} else {
 				this.isWindowSmall = false;
 			}
-		},
-		getEvents(search_parameters) {
-            this.showPanel = !this.showPanel;
-			this.loading = true;
-
-			api.getEvents(search_parameters).then((result) => {
-				try {
-					this.loading = false;
-
-					console.log(result.data);
-
-					this.events = result.data.events.event.filter((event) => {
-						let now = new Date();
-						let event_start = new Date(event.start_time);
-
-						if (event_start >= now) {
-							return event;
-						}
-					});
-
-					this.events.length
-						? (this.isEventsNull = false)
-						: (this.isEventsNull = true);
-				} catch (error) {
-					console.log(error);
-					this.loading = false;
-					this.isEventsNull = true;
-				}
-			});
-		},
-		isLoading(loading) {
-			this.loading = loading;
-		},
-		getMarkerIndex(markerIndex) {
-			this.markerIndex = markerIndex;
 		},
 	},
 };
@@ -176,7 +135,6 @@ export default {
 		}
 
 		.toggle-button {
-            //position: absolute;
 			margin-top: 8px;
 			width: 23px;
 			height: 48px;
@@ -198,11 +156,11 @@ export default {
 }
 
 .slide-out-enter-active {
-	animation: slide-out 0.2s ease-in-out reverse;
+	animation: slide-out 0.25s ease-in-out reverse;
 }
 
 .slide-out-leave-active {
-	animation: slide-out 0.2s ease-in-out;
+	animation: slide-out 0.25s ease-in-out;
 }
 
 @keyframes slide-out {

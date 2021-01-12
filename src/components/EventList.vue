@@ -2,34 +2,28 @@
 	<div id="event-list">
 		<h3
 			class="no-results"
-			v-if="!this.loading && this.eventList == null && !this.nullEvent"
+			v-if="
+				!this.$store.state.loading &&
+					!this.$store.state.events.length &&
+					this.$store.state.isEventsNull
+			"
 		>
 			Search for a location or postal code to obtain results.
 		</h3>
-		<div class="loader" v-else-if="this.loading">
-			<svg class="circular" viewBox="25 25 50 50">
-				<circle
-					class="path"
-					cx="50"
-					cy="50"
-					r="20"
-					fill="none"
-					stroke-width="2"
-					stroke-miterlimit="10"
-				/>
-			</svg>
-		</div>
-		<h3 class="no-results" v-else-if="!this.loading && this.nullEvent">
+		<CircleLoader v-else-if="this.$store.state.loading" />
+		<h3
+			class="no-results"
+			v-else-if="
+				!this.$store.state.loading && this.$store.state.isEventsNull
+			"
+		>
 			Could not find events based on the search criteria(s).
 		</h3>
 		<ul v-else>
 			<li
-				:class="{ active: index == active_item }"
-				@click="
-					setMarkerIndex(index);
-					setItemActive(index);
-				"
-				v-for="(event, index) in eventList"
+				:class="{ active: index == activeItem }"
+				@click="setActive(index)"
+				v-for="(event, index) in this.$store.state.events"
 				:item="event"
 				:key="index"
 			>
@@ -53,28 +47,27 @@
 </template>
 
 <script>
+import CircleLoader from "./CircleLoader";
+
 export default {
 	name: "EventList",
-	props: {
-		events: Array,
-		isLoading: Boolean,
-		isEventsNull: Boolean,
+	components: {
+		CircleLoader,
 	},
-	data() {
-		return {
-			loading: null,
-			nullEvent: null,
-			eventList: null,
-			active_item: null,
-		};
-	},
-	methods: {
-		setMarkerIndex(index) {
-			//sends index to App.vue, then App.vue sends to GoogleMaps component
-			this.$emit("markerIndex", index);
+	computed: {
+		activeItem() {
+			return this.$store.state.activeItem;
 		},
-		setItemActive(index) {
-			this.active_item = index;
+	},
+	/*
+        - addEventListener scroll to mounted hook
+        - onScroll method
+            - check to see if scrollbar is near bottom
+                - if it is, make api call to eventful api and concat res.data to this.eventList
+    */
+	methods: {
+		setActive(index) {
+			this.$store.dispatch("setActive", index);
 		},
 	},
 	filters: {
@@ -100,19 +93,6 @@ export default {
 				(minutes < 10 ? "0" + minutes : minutes) +
 				(hour < 12 ? " AM" : " PM")
 			);
-		},
-	},
-	watch: {
-		events() {
-			this.eventList = this.events;
-			this.$emit("loading", false);
-		},
-		isLoading() {
-			this.loading = this.isLoading;
-			this.active_item = null;
-		},
-		isEventsNull() {
-			this.nullEvent = this.isEventsNull;
 		},
 	},
 };
@@ -178,77 +158,6 @@ $primaryThree: #e1e8f0;
 
 		&:hover {
 			background-color: rgba(81, 208, 222, 0.5);
-		}
-	}
-
-	.loader {
-		position: relative;
-		align-self: center;
-		justify-self: center;
-		margin: 0 auto;
-		width: $width;
-		&:before {
-			content: "";
-			display: block;
-			padding-top: 100%;
-		}
-	}
-
-	.circular {
-		animation: rotate 2s linear infinite;
-		height: 100%;
-		transform-origin: center center;
-		width: 100%;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		margin: auto;
-	}
-
-	.path {
-		stroke-dasharray: 1, 200;
-		stroke-dashoffset: 0;
-		animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-		stroke-linecap: round;
-	}
-
-	@keyframes rotate {
-		100% {
-			transform: rotate(360deg);
-		}
-	}
-
-	@keyframes dash {
-		0% {
-			stroke-dasharray: 1, 200;
-			stroke-dashoffset: 0;
-		}
-		50% {
-			stroke-dasharray: 89, 200;
-			stroke-dashoffset: -35px;
-		}
-		100% {
-			stroke-dasharray: 89, 200;
-			stroke-dashoffset: -124px;
-		}
-	}
-
-	@keyframes color {
-		100%,
-		0% {
-			stroke: $primaryOne;
-		}
-		40% {
-			stroke: $primaryOne;
-		}
-		66% {
-			stroke: $primaryOne;
-		}
-		80%,
-		90% {
-			stroke: $primaryOne;
 		}
 	}
 }

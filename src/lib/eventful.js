@@ -19,7 +19,7 @@ function getEvents(search_parameters) {
 	}
 
 	if (within == null || within == "") {
-		within = 5;
+		within = 25;
 	}
 
 	return axios.get(
