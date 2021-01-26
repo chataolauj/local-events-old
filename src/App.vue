@@ -2,17 +2,7 @@
 	<div id="app">
 		<Search id="search-bar" />
 		<div id="content">
-			<div
-				id="hover-panel"
-				:style="{
-					width:
-						showPanel && !isWindowSmall
-							? ''
-							: isWindowSmall
-							? '100%'
-							: 'auto',
-				}"
-			>
+			<div id="hover-panel">
 				<transition name="slide-out">
 					<EventList v-show="showPanel" />
 				</transition>
@@ -61,6 +51,11 @@ export default {
 			this.onResize();
 		});
 	},
+	computed: {
+		loading() {
+			return this.$store.state.loading;
+		},
+	},
 	methods: {
 		onResize() {
 			if (window.innerWidth <= 640) {
@@ -68,6 +63,11 @@ export default {
 			} else {
 				this.isWindowSmall = false;
 			}
+		},
+	},
+	watch: {
+		loading() {
+			this.showPanel = true;
 		},
 	},
 };
@@ -126,12 +126,12 @@ export default {
 		z-index: 1;
 		position: absolute;
 		height: 100%;
-		width: 28%;
+		width: auto;
 		display: flex;
 
 		#event-list {
 			height: 100%;
-			width: 100%;
+			width: 400px;
 		}
 
 		.toggle-button {
@@ -165,7 +165,7 @@ export default {
 
 @keyframes slide-out {
 	0% {
-		margin-left: 0;
+		margin-left: 0%;
 	}
 	100% {
 		margin-left: -100%;
@@ -175,7 +175,19 @@ export default {
 @media screen and (max-width: 960px) {
 	#content {
 		#hover-panel {
-			width: 40%;
+			#event-list {
+				width: 325px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	#content {
+		#hover-panel {
+			#event-list {
+				width: 250px;
+			}
 		}
 	}
 }
@@ -188,6 +200,10 @@ export default {
 			width: 100%;
 			height: 50%;
 			flex-direction: column-reverse;
+
+			#event-list {
+				width: 100%;
+			}
 
 			.toggle-button {
 				width: 100%;
