@@ -1,5 +1,5 @@
 <template>
-	<div class="loader">
+	<div class="loader" :style="{ width: width + 'px' }">
 		<svg class="circular" viewBox="25 25 50 50">
 			<circle
 				class="path"
@@ -15,7 +15,12 @@
 </template>
 
 <script>
-export default {};
+export default {
+	name: "CircleLoader",
+	props: {
+		width: Number,
+	},
+};
 </script>
 
 <style lang="scss" scoped>
@@ -29,7 +34,6 @@ $primaryThree: #e1e8f0;
 	align-self: center;
 	justify-self: center;
 	margin: 0 auto;
-	width: $width;
 	&:before {
 		content: "";
 		display: block;
