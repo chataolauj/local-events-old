@@ -232,7 +232,7 @@ export default {
 
 			.load-more-overlay {
 				width: 100%;
-				height: calc(100% - 23px);
+				height: calc(100% - 21px);
 			}
 
 			.toggle-button {

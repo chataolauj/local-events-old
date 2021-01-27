@@ -1,5 +1,9 @@
 <template>
-	<div id="event-list" @scroll="onScroll">
+	<div
+		id="event-list"
+		@scroll="onScroll"
+		:class="{ 'no-scroll': loadingMore }"
+	>
 		<h3
 			class="no-results"
 			v-if="!loading && !events.length && isEventsNull"
@@ -72,7 +76,10 @@ export default {
 				el.srcElement.offsetHeight + el.srcElement.scrollTop >=
 				el.srcElement.scrollHeight - 1
 			) {
+				let position = el.srcElement.scrollTop;
 				await this.$store.dispatch("loadMoreEvents");
+
+				el.srcElement.scrollTop = position;
 			}
 		},
 		setActive(index) {
@@ -125,6 +132,7 @@ $primaryThree: #e1e8f0;
 #event-list {
 	overflow: auto;
 	display: flex;
+	height: 100%;
 	position: relative;
 	background: white;
 	box-shadow: 5px 60px 15px 0px rgba(0, 0, 0, 0.3);
@@ -176,6 +184,10 @@ $primaryThree: #e1e8f0;
 		&:hover {
 			background-color: rgba(81, 208, 222, 0.5);
 		}
+	}
+
+	&.no-scroll {
+		overflow: hidden;
 	}
 }
 </style>

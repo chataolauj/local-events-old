@@ -65,12 +65,12 @@ const store = new Vuex.Store({
 			commit("setLoading", true);
 			commit("setActiveItem", null);
 			commit("setMarkerIndex", null);
-			console.log(state.searchParams);
+			//console.log(state.searchParams);
 
 			searchParams.pageNumber = 1;
 
 			commit("setSearchParams", searchParams);
-			console.log(state.searchParams);
+			//console.log(state.searchParams);
 
 			eventful
 				.getEvents(searchParams)
@@ -80,13 +80,13 @@ const store = new Vuex.Store({
 
 						commit("setMaxPage", res.data.page_count);
 
-						console.log(res.data);
+						//console.log(res.data);
 
 						await dispatch(
 							"filterEvents",
 							res.data.events.event
 						).then((events) => {
-							console.log(events);
+							//console.log(events);
 							commit("setEvents", events);
 						});
 
@@ -108,25 +108,25 @@ const store = new Vuex.Store({
 		async loadMoreEvents({ state, commit, dispatch }) {
 			commit("setLoadingMore", true);
 
-			console.log(this.state.searchParams.pageNumber);
-			console.log(this.state.maxPage);
+			//console.log(this.state.searchParams.pageNumber);
+			//console.log(this.state.maxPage);
 
 			if (state.searchParams.pageNumber < state.maxPage) {
 				await eventful
 					.loadMoreEvents()
 					.then(async (res) => {
-						console.log(state.searchParams);
-						console.log(res.data);
+						//console.log(state.searchParams);
+						//console.log(res.data);
 
 						await dispatch(
 							"filterEvents",
 							res.data.events.event
 						).then((events) => {
+							state.events.push(...events);
+
 							setTimeout(() => {
 								commit("setLoadingMore", false);
-							}, 5000);
-
-							state.events.push(...events);
+							}, 2000);
 						});
 					})
 					.catch((err) => {
