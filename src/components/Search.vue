@@ -8,6 +8,7 @@
 				type="text"
 				placeholder="Search location"
 				@keyup.enter="setParameters"
+				required
 			/>
 		</div>
 		<div id="date" class="search-parameters">
@@ -38,15 +39,16 @@ export default {
 	data() {
 		return {
 			search_parameters: {
-				location: null,
-				date: null,
-				within: null,
+				location: "",
+				date: "",
+				within: "",
+				pageNumber: 1,
 			},
 		};
 	},
 	methods: {
 		setParameters() {
-			this.$emit("search_parameters", this.search_parameters);
+			this.$store.dispatch("getEvents", this.search_parameters);
 		},
 	},
 };
@@ -115,7 +117,8 @@ $primaryThree: #e1e8f0;
 		border-radius: 5px;
 		outline: none;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			cursor: pointer;
 			background-color: $primaryTwo;
 			border-color: $primaryTwo;

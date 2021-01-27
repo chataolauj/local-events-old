@@ -7,10 +7,6 @@ import gMaps from "../lib/gMaps.js";
 
 export default {
 	name: "GoogleMaps",
-	props: {
-		events: Array,
-		markerIndex: Number,
-	},
 	data() {
 		return {
 			google: null,
@@ -38,6 +34,14 @@ export default {
 		} catch (error) {
 			console.error(error);
 		}
+	},
+	computed: {
+		events() {
+			return this.$store.state.events;
+		},
+		markerIndex() {
+			return this.$store.state.markerIndex;
+		},
 	},
 	watch: {
 		events() {
@@ -88,6 +92,8 @@ export default {
 			this.map.fitBounds(bounds);
 		},
 		markerIndex() {
+			this.$store.commit("setActiveItem", this.markerIndex);
+
 			let clicked_marker = this.locations[this.markerIndex];
 
 			this.google.maps.event.trigger(clicked_marker, "spider_click");
@@ -96,7 +102,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-#google-map {
-}
-</style>
+<style lang="scss" scoped></style>

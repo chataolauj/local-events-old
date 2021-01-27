@@ -1,35 +1,20 @@
 <template>
-	<div id="event-list">
+	<div id="event-list" @scroll="onScroll">
 		<h3
 			class="no-results"
-			v-if="!this.loading && this.eventList == null && !this.nullEvent"
+			v-if="!loading && !events.length && isEventsNull"
 		>
 			Search for a location or postal code to obtain results.
 		</h3>
-		<div class="loader" v-else-if="this.loading">
-			<svg class="circular" viewBox="25 25 50 50">
-				<circle
-					class="path"
-					cx="50"
-					cy="50"
-					r="20"
-					fill="none"
-					stroke-width="2"
-					stroke-miterlimit="10"
-				/>
-			</svg>
-		</div>
-		<h3 class="no-results" v-else-if="!this.loading && this.nullEvent">
+		<CircleLoader v-else-if="loading" :width="100" />
+		<h3 class="no-results" v-else-if="!loading && isEventsNull">
 			Could not find events based on the search criteria(s).
 		</h3>
 		<ul v-else>
 			<li
-				:class="{ active: index == active_item }"
-				@click="
-					setMarkerIndex(index);
-					setItemActive(index);
-				"
-				v-for="(event, index) in eventList"
+				:class="{ active: index == activeItem }"
+				@click="setActive(index)"
+				v-for="(event, index) in events"
 				:item="event"
 				:key="index"
 			>
@@ -40,41 +25,58 @@
 					{{ event.region_abbr }}
 				</p>
 				<p>
-					<i class="fas fa-calendar-day"></i>
-					{{ event.start_time | formatDate(event.start_time) }}
-				</p>
-				<p>
-					<i class="fas fa-clock"></i>
+					<i class="fas fa-hourglass-start"></i> <b>Start:</b>
+					{{ event.start_time | formatDate(event.start_time) }} at
 					{{ event.start_time | formatTime(event.start_time) }}
 				</p>
+				<p>
+					<i class="fas fa-hourglass-end"></i> <b>End:</b>
+					{{ event.stop_time | formatDate(event.stop_time) }} at
+					{{ event.stop_time | formatTime(event.stop_time) }}
+				</p>
 			</li>
+			<!-- <button @click="loadMoreEvents()">Load More</button> -->
 		</ul>
 	</div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+import CircleLoader from "./CircleLoader";
+
 export default {
 	name: "EventList",
-	props: {
-		events: Array,
-		isLoading: Boolean,
-		isEventsNull: Boolean,
+	components: {
+		CircleLoader,
 	},
-	data() {
-		return {
-			loading: null,
-			nullEvent: null,
-			eventList: null,
-			active_item: null,
-		};
+	computed: {
+		...mapState([
+			"loading",
+			"events",
+			"isEventsNull",
+			"activeItem",
+			"loadingMore",
+		]),
+	},
+	mounted() {
+		this.$nextTick(() => {
+			window.addEventListener("scroll", this.onScroll);
+		});
+	},
+	beforeDestroy() {
+		window.removeEventListener("scroll", this.onScroll);
 	},
 	methods: {
-		setMarkerIndex(index) {
-			//sends index to App.vue, then App.vue sends to GoogleMaps component
-			this.$emit("markerIndex", index);
+		async onScroll(el) {
+			if (
+				el.srcElement.offsetHeight + el.srcElement.scrollTop >=
+				el.srcElement.scrollHeight - 1
+			) {
+				await this.$store.dispatch("loadMoreEvents");
+			}
 		},
-		setItemActive(index) {
-			this.active_item = index;
+		setActive(index) {
+			this.$store.dispatch("setActive", index);
 		},
 	},
 	filters: {
@@ -91,28 +93,22 @@ export default {
 		},
 		formatTime(eventDate) {
 			let date = new Date(eventDate);
+
 			let hour = date.getHours();
 			let minutes = date.getMinutes();
+			let timezone = date
+				.toLocaleString("en", { timeZoneName: "short" })
+				.split(" ")
+				.pop();
 
 			return (
-				(hour > 12 ? hour - 12 : 12) +
-				":" + //if false (hour = 0), then set to 12
+				(hour > 12 ? hour - 12 : hour == 0 ? 12 : hour) +
+				":" +
 				(minutes < 10 ? "0" + minutes : minutes) +
-				(hour < 12 ? " AM" : " PM")
+				(hour < 12 ? " a.m." : " p.m.") +
+				" " +
+				timezone
 			);
-		},
-	},
-	watch: {
-		events() {
-			this.eventList = this.events;
-			this.$emit("loading", false);
-		},
-		isLoading() {
-			this.loading = this.isLoading;
-			this.active_item = null;
-		},
-		isEventsNull() {
-			this.nullEvent = this.isEventsNull;
 		},
 	},
 };
@@ -129,6 +125,7 @@ $primaryThree: #e1e8f0;
 #event-list {
 	overflow: auto;
 	display: flex;
+	position: relative;
 	background: white;
 	box-shadow: 5px 60px 15px 0px rgba(0, 0, 0, 0.3);
 
@@ -178,77 +175,6 @@ $primaryThree: #e1e8f0;
 
 		&:hover {
 			background-color: rgba(81, 208, 222, 0.5);
-		}
-	}
-
-	.loader {
-		position: relative;
-		align-self: center;
-		justify-self: center;
-		margin: 0 auto;
-		width: $width;
-		&:before {
-			content: "";
-			display: block;
-			padding-top: 100%;
-		}
-	}
-
-	.circular {
-		animation: rotate 2s linear infinite;
-		height: 100%;
-		transform-origin: center center;
-		width: 100%;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		margin: auto;
-	}
-
-	.path {
-		stroke-dasharray: 1, 200;
-		stroke-dashoffset: 0;
-		animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-		stroke-linecap: round;
-	}
-
-	@keyframes rotate {
-		100% {
-			transform: rotate(360deg);
-		}
-	}
-
-	@keyframes dash {
-		0% {
-			stroke-dasharray: 1, 200;
-			stroke-dashoffset: 0;
-		}
-		50% {
-			stroke-dasharray: 89, 200;
-			stroke-dashoffset: -35px;
-		}
-		100% {
-			stroke-dasharray: 89, 200;
-			stroke-dashoffset: -124px;
-		}
-	}
-
-	@keyframes color {
-		100%,
-		0% {
-			stroke: $primaryOne;
-		}
-		40% {
-			stroke: $primaryOne;
-		}
-		66% {
-			stroke: $primaryOne;
-		}
-		80%,
-		90% {
-			stroke: $primaryOne;
 		}
 	}
 }

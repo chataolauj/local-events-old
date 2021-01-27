@@ -1,24 +1,17 @@
 <template>
 	<div id="app">
-		<Search id="search-bar" @search_parameters="getEvents" />
+		<Search id="search-bar" />
 		<div id="content">
-			<!-- :style="{
-					width: !showPanel && !isWindowSmall ? 'auto' : '',
-					height: !showPanel && isWindowSmall ? 'auto' : '',
-				}" -->
-			<div id="hover-panel" :style="{width: showPanel && !isWindowSmall ? '' : showPanel && isWindowSmall ? '100%' : 'auto'}">
+			<div id="hover-panel">
 				<transition name="slide-out">
-					<EventList
-						v-show="showPanel"
-						@loading="isLoading"
-						@markerIndex="getMarkerIndex"
-						:isLoading="this.loading"
-						:isEventsNull="this.isEventsNull"
-						:events="this.events"
-					/>
+					<EventList v-show="showPanel" />
 				</transition>
+				<div v-if="loadingMore" class="load-more-overlay">
+					<CircleLoader :width="100" />
+				</div>
 				<button
 					@click="showPanel = !showPanel"
+					:disabled="loadingMore"
 					:class="[
 						'toggle-button',
 						'fas',
@@ -33,7 +26,7 @@
 					aria-label="Collapse side panel"
 				></button>
 			</div>
-			<GoogleMaps :events="this.events" :markerIndex="this.markerIndex" />
+			<GoogleMaps />
 		</div>
 	</div>
 </template>
@@ -42,23 +35,20 @@
 import Search from "./components/Search.vue";
 import EventList from "./components/EventList.vue";
 import GoogleMaps from "./components/GoogleMaps.vue";
-import api from "./lib/eventful.js";
+import CircleLoader from "./components/CircleLoader.vue";
 
 export default {
 	name: "app",
 	components: {
 		Search,
 		EventList,
+		CircleLoader,
 		GoogleMaps,
 	},
 	data() {
 		return {
 			isWindowSmall: null,
 			showPanel: true,
-			loading: null,
-			events: null,
-			isEventsNull: null,
-			markerIndex: null,
 		};
 	},
 	mounted() {
@@ -66,6 +56,14 @@ export default {
 			window.addEventListener("resize", this.onResize);
 			this.onResize();
 		});
+	},
+	computed: {
+		loading() {
+			return this.$store.state.loading;
+		},
+		loadingMore() {
+			return this.$store.state.loadingMore;
+		},
 	},
 	methods: {
 		onResize() {
@@ -75,40 +73,10 @@ export default {
 				this.isWindowSmall = false;
 			}
 		},
-		getEvents(search_parameters) {
-            this.showPanel = !this.showPanel;
-			this.loading = true;
-
-			api.getEvents(search_parameters).then((result) => {
-				try {
-					this.loading = false;
-
-					console.log(result.data);
-
-					this.events = result.data.events.event.filter((event) => {
-						let now = new Date();
-						let event_start = new Date(event.start_time);
-
-						if (event_start >= now) {
-							return event;
-						}
-					});
-
-					this.events.length
-						? (this.isEventsNull = false)
-						: (this.isEventsNull = true);
-				} catch (error) {
-					console.log(error);
-					this.loading = false;
-					this.isEventsNull = true;
-				}
-			});
-		},
-		isLoading(loading) {
-			this.loading = loading;
-		},
-		getMarkerIndex(markerIndex) {
-			this.markerIndex = markerIndex;
+	},
+	watch: {
+		loading() {
+			this.showPanel = true;
 		},
 	},
 };
@@ -167,16 +135,28 @@ export default {
 		z-index: 1;
 		position: absolute;
 		height: 100%;
-		width: 28%;
+		width: auto;
 		display: flex;
 
 		#event-list {
 			height: 100%;
-			width: 100%;
+			width: 400px;
+		}
+
+		.load-more-overlay {
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			align-items: center;
+			justify-content: center;
+			z-index: 99999;
+			width: 400px;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.5);
 		}
 
 		.toggle-button {
-            //position: absolute;
 			margin-top: 8px;
 			width: 23px;
 			height: 48px;
@@ -198,16 +178,16 @@ export default {
 }
 
 .slide-out-enter-active {
-	animation: slide-out 0.2s ease-in-out reverse;
+	animation: slide-out 0.25s ease-in-out reverse;
 }
 
 .slide-out-leave-active {
-	animation: slide-out 0.2s ease-in-out;
+	animation: slide-out 0.25s ease-in-out;
 }
 
 @keyframes slide-out {
 	0% {
-		margin-left: 0;
+		margin-left: 0%;
 	}
 	100% {
 		margin-left: -100%;
@@ -217,7 +197,21 @@ export default {
 @media screen and (max-width: 960px) {
 	#content {
 		#hover-panel {
-			width: 40%;
+			#event-list,
+			.load-more-overlay {
+				width: 325px;
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	#content {
+		#hover-panel {
+			#event-list,
+			.load-more-overlay {
+				width: 250px;
+			}
 		}
 	}
 }
@@ -230,6 +224,16 @@ export default {
 			width: 100%;
 			height: 50%;
 			flex-direction: column-reverse;
+
+			#event-list {
+				height: 100%;
+				width: 100%;
+			}
+
+			.load-more-overlay {
+				width: 100%;
+				height: calc(100% - 23px);
+			}
 
 			.toggle-button {
 				width: 100%;
