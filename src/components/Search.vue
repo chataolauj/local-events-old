@@ -42,13 +42,13 @@ export default {
 				location: "",
 				date: "",
 				within: "",
+				pageNumber: 1,
 			},
 		};
 	},
 	methods: {
-		async setParameters() {
-			//this.$emit("search_parameters", this.search_parameters);
-			await this.$store.dispatch("getEvents", this.search_parameters);
+		setParameters() {
+			this.$store.dispatch("getEvents", this.search_parameters);
 		},
 	},
 };
@@ -117,7 +117,8 @@ $primaryThree: #e1e8f0;
 		border-radius: 5px;
 		outline: none;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			cursor: pointer;
 			background-color: $primaryTwo;
 			border-color: $primaryTwo;

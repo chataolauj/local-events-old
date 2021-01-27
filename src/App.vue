@@ -6,8 +6,12 @@
 				<transition name="slide-out">
 					<EventList v-show="showPanel" />
 				</transition>
+				<div v-if="loadingMore" class="load-more-overlay">
+					<CircleLoader :width="100" />
+				</div>
 				<button
 					@click="showPanel = !showPanel"
+					:disabled="loadingMore"
 					:class="[
 						'toggle-button',
 						'fas',
@@ -31,12 +35,14 @@
 import Search from "./components/Search.vue";
 import EventList from "./components/EventList.vue";
 import GoogleMaps from "./components/GoogleMaps.vue";
+import CircleLoader from "./components/CircleLoader.vue";
 
 export default {
 	name: "app",
 	components: {
 		Search,
 		EventList,
+		CircleLoader,
 		GoogleMaps,
 	},
 	data() {
@@ -54,6 +60,9 @@ export default {
 	computed: {
 		loading() {
 			return this.$store.state.loading;
+		},
+		loadingMore() {
+			return this.$store.state.loadingMore;
 		},
 	},
 	methods: {
@@ -134,6 +143,19 @@ export default {
 			width: 400px;
 		}
 
+		.load-more-overlay {
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			align-items: center;
+			justify-content: center;
+			z-index: 99999;
+			width: 400px;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+
 		.toggle-button {
 			margin-top: 8px;
 			width: 23px;
@@ -175,7 +197,8 @@ export default {
 @media screen and (max-width: 960px) {
 	#content {
 		#hover-panel {
-			#event-list {
+			#event-list,
+			.load-more-overlay {
 				width: 325px;
 			}
 		}
@@ -185,7 +208,8 @@ export default {
 @media screen and (max-width: 768px) {
 	#content {
 		#hover-panel {
-			#event-list {
+			#event-list,
+			.load-more-overlay {
 				width: 250px;
 			}
 		}
@@ -202,7 +226,13 @@ export default {
 			flex-direction: column-reverse;
 
 			#event-list {
+				height: 100%;
 				width: 100%;
+			}
+
+			.load-more-overlay {
+				width: 100%;
+				height: calc(100% - 23px);
 			}
 
 			.toggle-button {

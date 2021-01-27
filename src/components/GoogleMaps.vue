@@ -7,10 +7,6 @@ import gMaps from "../lib/gMaps.js";
 
 export default {
 	name: "GoogleMaps",
-	/* props: {
-		events: Array,
-		markerIndex: Number,
-	}, */
 	data() {
 		return {
 			google: null,
