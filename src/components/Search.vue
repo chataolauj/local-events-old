@@ -5,12 +5,12 @@
 				<span class="fa fa-search icon"></span>
 				<input
 					class="search-input"
-					v-model="search_parameters.location"
+					v-model="location"
 					@focus="isFocused = true"
 					@blur="isFocused = false"
 					type="text"
 					placeholder="Search location"
-					@keyup.enter="setParameters"
+					@keyup.enter="getEvents()"
 					required
 				/>
 			</div>
@@ -27,7 +27,7 @@
 				</li>
 			</ul>
 		</div>
-		<button id="search-button" @click="setParameters">Search</button>
+		<button id="search-button" @click="getEvents">Search</button>
 	</div>
 </template>
 
@@ -38,12 +38,7 @@ export default {
 	name: "Search",
 	data() {
 		return {
-			search_parameters: {
-				location: "",
-				date: "",
-				within: "",
-				pageNumber: 1,
-			},
+			location: "",
 			isFocused: false,
 			isSelected: false,
 			acResults: [],
@@ -51,8 +46,8 @@ export default {
 		};
 	},
 	methods: {
-		setParameters() {
-			this.$store.dispatch("getEvents", this.search_parameters);
+		getEvents() {
+			this.$store.dispatch("getEvents", this.location);
 		},
 		searchLocation() {
 			if (this.timeout) {
@@ -60,7 +55,7 @@ export default {
 			}
 
 			this.timeout = setTimeout(async () => {
-				await fwdGeo(this.search_parameters.location)
+				await fwdGeo(this.location)
 					.then((res) => {
 						this.acResults = res.body.features;
 
@@ -73,8 +68,8 @@ export default {
 		},
 	},
 	watch: {
-		"search_parameters.location"() {
-			if (this.search_parameters.location.length > 2) {
+		location() {
+			if (this.location.length > 2) {
 				this.searchLocation();
 			}
 		},

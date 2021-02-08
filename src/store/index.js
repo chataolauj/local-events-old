@@ -61,19 +61,24 @@ const store = new Vuex.Store({
 				resolve(filtered);
 			});
 		},
-		getEvents({ state, commit, dispatch }, searchParams) {
+		getEvents({ state, commit, dispatch }, location) {
 			commit("setLoading", true);
 			commit("setActiveItem", null);
 			commit("setMarkerIndex", null);
 			//console.log(state.searchParams);
 
-			searchParams.pageNumber = 1;
+			let params = {
+				location,
+				within: "",
+				date: "",
+				pageNumber: 1,
+			};
 
-			commit("setSearchParams", searchParams);
+			commit("setSearchParams", params);
 			//console.log(state.searchParams);
 
 			eventful
-				.getEvents(searchParams)
+				.getEvents(params)
 				.then(async (res) => {
 					try {
 						commit("setLoading", false);
