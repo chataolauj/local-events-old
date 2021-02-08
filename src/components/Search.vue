@@ -1,39 +1,39 @@
 <template>
 	<div id="search-bar">
-		<div id="location" class="search-parameters">
-			<span class="fa fa-search icon"></span>
-			<input
-				class="search-input"
-				v-model="search_parameters.location"
-				type="text"
-				placeholder="Search location"
-				@keyup.enter="setParameters"
-				required
-			/>
-		</div>
-		<div id="date" class="search-parameters">
-			<span class="fas fa-calendar-alt icon"></span>
-			<select class="search-select" v-model="search_parameters.date">
-				<option value="All">All</option>
-				<option value="Today">Today</option>
-				<option value="This Week">This Week</option>
-				<option value="Next Week">Next Week</option>
-			</select>
-		</div>
-		<div id="distance" class="search-parameters">
-			<span class="fa fa-road icon"></span>
-			<select class="search-select" v-model="search_parameters.within">
-				<option value="5">5 mi</option>
-				<option value="10">10 mi</option>
-				<option value="25">25 mi</option>
-				<option value="50">50 mi</option>
-			</select>
+		<div id="autocomplete">
+			<div class="search-parameters">
+				<span class="fa fa-search icon"></span>
+				<input
+					class="search-input"
+					v-model="search_parameters.location"
+					@focus="isFocused = true"
+					@blur="isFocused = false"
+					type="text"
+					placeholder="Search location"
+					@keyup.enter="setParameters"
+					required
+				/>
+			</div>
+			<ul id="ac-list" v-show="isFocused">
+				<li
+					v-for="(location, index) in acResults"
+					:item="location"
+					:key="index"
+				>
+					{{ location.place_name }}
+				</li>
+				<li v-if="!acResults.length">
+					No results...
+				</li>
+			</ul>
 		</div>
 		<button id="search-button" @click="setParameters">Search</button>
 	</div>
 </template>
 
 <script>
+import { fwdGeo } from "../lib/mapbox.js";
+
 export default {
 	name: "Search",
 	data() {
@@ -44,11 +44,39 @@ export default {
 				within: "",
 				pageNumber: 1,
 			},
+			isFocused: false,
+			isSelected: false,
+			acResults: [],
+			timeout: null,
 		};
 	},
 	methods: {
 		setParameters() {
 			this.$store.dispatch("getEvents", this.search_parameters);
+		},
+		searchLocation() {
+			if (this.timeout) {
+				clearTimeout(this.timeout);
+			}
+
+			this.timeout = setTimeout(async () => {
+				await fwdGeo(this.search_parameters.location)
+					.then((res) => {
+						this.acResults = res.body.features;
+
+						console.log(res);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}, 500);
+		},
+	},
+	watch: {
+		"search_parameters.location"() {
+			if (this.search_parameters.location.length > 2) {
+				this.searchLocation();
+			}
 		},
 	},
 };
@@ -73,7 +101,6 @@ $primaryThree: #e1e8f0;
 		background-color: white;
 		border: 1px solid white;
 		border-radius: 5px;
-		margin-right: 5px;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -88,26 +115,47 @@ $primaryThree: #e1e8f0;
 		}
 	}
 
-	#location {
-		width: 20%;
+	#autocomplete {
+		position: relative;
+		width: 30%;
+		margin-right: 5px;
+	}
+
+	#ac-list {
+		z-index: 1000;
+		position: absolute;
+		width: 100%;
+		list-style: none;
+		margin-top: 5px;
+		color: black;
+		background-color: white;
+		border: 2px solid white;
+		border-radius: 5px;
+		box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+
+		li {
+			padding: 5px;
+
+			&:last-child {
+				border-bottom: none;
+			}
+
+			&:hover {
+				cursor: pointer;
+				color: white;
+				background-color: rgba(0, 0, 0, 0.3);
+				border-radius: 5px;
+			}
+		}
 	}
 
 	.search-input {
-		width: 93%;
+		width: 100%;
 		padding: 5px;
 		outline: none;
 		border: 2px solid white;
 		border-radius: 5px;
 		margin-left: 30px;
-	}
-
-	.search-select {
-		width: 93%;
-		padding: 5px;
-		outline: none;
-		border: 2px solid white;
-		border-radius: 5px;
-		margin-left: 25px;
 	}
 
 	#search-button {

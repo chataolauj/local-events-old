@@ -4,17 +4,34 @@ const geoService = geocoding({
 	accessToken: process.env.VUE_APP_MAPBOX_ACCESS_TOKEN,
 });
 
-function forwardGeocode(location) {
-	geoService
-		.forwardGeocode({
-			query: location,
-		})
-		.send()
-		.then((res) => {
-			console.log(res);
-		});
+export function fwdGeo(location) {
+	return new Promise((resolve, reject) => {
+		geoService
+			.forwardGeocode({
+				query: location,
+				limit: 5,
+				types: [
+					"place",
+					"region",
+					"postcode",
+					"country",
+					"address",
+					"locality",
+					"district",
+				],
+			})
+			.send()
+			.then(
+				(res) => {
+					resolve(res);
+				},
+				(err) => {
+					reject(err);
+				}
+			);
+	});
 }
 
 export default {
-	forwardGeocode,
+	fwdGeo,
 };
