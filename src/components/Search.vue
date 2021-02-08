@@ -1,8 +1,7 @@
 <template>
 	<div id="search-bar">
 		<div id="autocomplete">
-			<div class="search-parameters">
-				<span class="fa fa-search icon"></span>
+			<div class="search-container">
 				<input
 					class="search-input"
 					v-model="location"
@@ -10,24 +9,27 @@
 					@blur="isFocused = false"
 					type="text"
 					placeholder="Search location"
-					@keyup.enter="getEvents()"
+					@keyup.enter="getEvents"
 					required
 				/>
+				<button
+					v-if="this.location.length > 2"
+					class="far fa-times-circle icon"
+					@mousedown="clearLocation"
+				></button>
+				<button class="fa fa-search icon" @click="getEvents"></button>
 			</div>
-			<ul id="ac-list" v-show="isFocused">
+			<ul id="ac-list" v-show="isFocused && this.acResults.length">
 				<li
 					v-for="(location, index) in acResults"
 					:item="location"
 					:key="index"
+					@mousedown="setLocation(location.place_name)"
 				>
 					{{ location.place_name }}
 				</li>
-				<li v-if="!acResults.length">
-					No results...
-				</li>
 			</ul>
 		</div>
-		<button id="search-button" @click="getEvents">Search</button>
 	</div>
 </template>
 
@@ -46,9 +48,6 @@ export default {
 		};
 	},
 	methods: {
-		getEvents() {
-			this.$store.dispatch("getEvents", this.location);
-		},
 		searchLocation() {
 			if (this.timeout) {
 				clearTimeout(this.timeout);
@@ -64,13 +63,28 @@ export default {
 					.catch((err) => {
 						console.log(err);
 					});
-			}, 500);
+			}, 300);
+		},
+		setLocation(location) {
+			this.location = location;
+			this.isSelected = true;
+			this.acResults = [];
+			this.getEvents();
+		},
+		clearLocation() {
+			this.location = "";
+			this.acResults = [];
+		},
+		getEvents() {
+			this.$store.dispatch("getEvents", this.location);
 		},
 	},
 	watch: {
 		location() {
-			if (this.location.length > 2) {
+			if (this.location.length > 2 && !this.isSelected) {
 				this.searchLocation();
+			} else {
+				this.isSelected = false;
 			}
 		},
 	},
@@ -91,7 +105,7 @@ $primaryThree: #e1e8f0;
 	align-items: center;
 	justify-content: center;
 
-	.search-parameters {
+	.search-container {
 		position: relative;
 		background-color: white;
 		border: 1px solid white;
@@ -100,20 +114,16 @@ $primaryThree: #e1e8f0;
 		flex-direction: row;
 		align-items: center;
 
-		&:hover {
-			box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
-			transition: 0.2s ease-in-out;
-		}
-
+		&:hover,
 		&:focus-within {
 			box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.3);
+			transition: 0.1s ease-in-out;
 		}
 	}
 
 	#autocomplete {
 		position: relative;
-		width: 30%;
-		margin-right: 5px;
+		width: 40%;
 	}
 
 	#ac-list {
@@ -147,40 +157,34 @@ $primaryThree: #e1e8f0;
 	.search-input {
 		width: 100%;
 		padding: 5px;
+		margin-left: 5px;
 		outline: none;
 		border: 2px solid white;
 		border-radius: 5px;
-		margin-left: 30px;
-	}
-
-	#search-button {
-		padding: 6.7px;
-		border: 2px solid $primaryThree;
-		background-color: $primaryThree;
-		border-radius: 5px;
-		outline: none;
-
-		&:hover,
-		&:focus {
-			cursor: pointer;
-			background-color: $primaryTwo;
-			border-color: $primaryTwo;
-		}
-
-		&:active {
-			background-color: $primaryTwo;
-			border-color: $primaryOne;
-		}
 	}
 
 	.icon {
-		position: absolute;
-		font-size: 15px;
+		//position: absolute;
+		width: 30px;
+		font-size: 17px;
 		color: $primaryOne;
 		background: none;
 		outline: none;
 		border: none;
-		left: 10px;
+
+		&:hover {
+			cursor: pointer;
+			color: $primaryTwo;
+			transition: ease 0.1s;
+		}
+	}
+
+	.fa-times-circle {
+		right: 40px;
+	}
+
+	.fa-search {
+		right: 10px;
 	}
 }
 </style>
