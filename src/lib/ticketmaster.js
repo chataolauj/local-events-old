@@ -1,12 +1,15 @@
 import axios from "axios";
 import store from "../store/index";
+import geohash from "latlon-geohash";
 
-const proxy = "https://cors-anywhere.herokuapp.com/";
-const EVENTFUL_API_KEY = process.env.VUE_APP_EVENTFUL_KEY;
-const API_URL = `${proxy}http://api.eventful.com/json/events/search?app_key=${EVENTFUL_API_KEY}`;
+//const proxy = "https://cors-anywhere.herokuapp.com/";
+const TICKETMASTER_API_KEY = process.env.VUE_APP_TICKETMASTER_KEY;
+const API_URL = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_API_KEY}`;
 
 function getEvents(searchParams) {
-	let { location, date, within, pageNumber } = searchParams;
+	let { coords, date, radius, pageNumber } = searchParams;
+
+	let geoPoint = geohash.encode(coords.lat, coords.lng, 9);
 
 	if (date == null || date == "") {
 		var today = new Date();
@@ -17,12 +20,12 @@ function getEvents(searchParams) {
 		date = mm + "/" + dd + "/" + yyyy;
 	}
 
-	if (within == null || within == "") {
-		within = 25;
+	if (radius == null || radius == "") {
+		radius = 25;
 	}
 
 	return axios.get(
-		`${API_URL}&location=${location}&within=${within}&sort_order=relevance&sort_direction=ascending&page_number=${pageNumber}&page_size=25&date=${date}`
+		`${API_URL}&geoPoint=${geoPoint}&radius=${radius}&page=${pageNumber}`
 	);
 }
 

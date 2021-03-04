@@ -22,21 +22,26 @@
 				:item="event"
 				:key="index"
 			>
-				<h4>{{ event.title }}</h4>
+				<h4>{{ event.name }}</h4>
 				<p>
 					<i class="fas fa-map-marker-alt"></i>
-					{{ event.venue_address }}, {{ event.city_name }},
-					{{ event.region_abbr }}
+					{{ event._embedded.venues[0].address.line1 }},
+					{{ event._embedded.venues[0].city.name }},
+					{{ event._embedded.venues[0].state.stateCode }},
+					{{ event._embedded.venues[0].postalCode }}
 				</p>
 				<p>
-					<i class="fas fa-hourglass-start"></i> <b>Start:</b>
-					{{ event.start_time | formatDate(event.start_time) }} at
-					{{ event.start_time | formatTime(event.start_time) }}
+					<i class="fas fa-calendar"></i>
+					{{
+						event.dates.start.dateTime
+							| formatDate(event.start_time)
+					}}
 				</p>
 				<p>
-					<i class="fas fa-hourglass-end"></i> <b>End:</b>
-					{{ event.stop_time | formatDate(event.stop_time) }} at
-					{{ event.stop_time | formatTime(event.stop_time) }}
+					<i class="fas fa-clock"></i>
+					{{
+						event.dates.start.dateTime | formatTime(event.stop_time)
+					}}
 				</p>
 			</li>
 			<!-- <button @click="loadMoreEvents()">Load More</button> -->
@@ -64,7 +69,7 @@ export default {
 	},
 	mounted() {
 		this.$nextTick(() => {
-			window.addEventListener("scroll", this.onScroll);
+			//window.addEventListener("scroll", this.onScroll);
 		});
 	},
 	beforeDestroy() {

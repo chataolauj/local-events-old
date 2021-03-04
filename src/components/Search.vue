@@ -24,7 +24,7 @@
 					v-for="(location, index) in acResults"
 					:item="location"
 					:key="index"
-					@mousedown="setLocation(location.place_name)"
+					@mousedown="setCoords(location)"
 				>
 					{{ location.place_name }}
 				</li>
@@ -35,12 +35,14 @@
 
 <script>
 import { fwdGeo } from "../lib/mapbox.js";
+//import ticketmaster from "../lib/ticketmaster";
 
 export default {
 	name: "Search",
 	data() {
 		return {
 			location: "",
+			coords: {},
 			isFocused: false,
 			isSelected: false,
 			acResults: [],
@@ -65,8 +67,11 @@ export default {
 					});
 			}, 300);
 		},
-		setLocation(location) {
-			this.location = location;
+		setCoords(location) {
+			this.coords = {
+				lng: location.center[0],
+				lat: location.center[1],
+			};
 			this.isSelected = true;
 			this.acResults = [];
 			this.getEvents();
@@ -76,7 +81,7 @@ export default {
 			this.acResults = [];
 		},
 		getEvents() {
-			this.$store.dispatch("getEvents", this.location);
+			this.$store.dispatch("getEvents", this.coords);
 		},
 	},
 	watch: {

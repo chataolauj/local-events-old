@@ -69,16 +69,18 @@ export default {
 			this.locations = this.events.map((event) => {
 				let marker = new this.google.maps.Marker({
 					position: {
-						lat: parseFloat(event.latitude),
-						lng: parseFloat(event.longitude),
+						lat: parseFloat(
+							event._embedded.venues[0].location.latitude
+						),
+						lng: parseFloat(
+							event._embedded.venues[0].location.longitude
+						),
 					},
-					title: event.title,
+					title: event.name,
 				});
 
 				marker.addListener("spider_click", function() {
-					infoWindow.setContent(
-						event.description || "No description."
-					);
+					infoWindow.setContent(event.name || "No description.");
 					infoWindow.open(this.map, marker);
 				});
 

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import eventful from "../lib/eventful";
+import ticketmaster from "../lib/ticketmaster";
 
 Vue.use(Vuex);
 
@@ -61,23 +61,23 @@ const store = new Vuex.Store({
 				resolve(filtered);
 			});
 		},
-		getEvents({ state, commit, dispatch }, location) {
+		getEvents({ state, commit }, coords) {
 			commit("setLoading", true);
 			commit("setActiveItem", null);
 			commit("setMarkerIndex", null);
 			//console.log(state.searchParams);
 
 			let params = {
-				location,
-				within: "",
+				coords,
+				radius: "",
 				date: "",
-				pageNumber: 1,
+				pageNumber: 0,
 			};
 
 			commit("setSearchParams", params);
 			//console.log(state.searchParams);
 
-			eventful
+			ticketmaster
 				.getEvents(params)
 				.then(async (res) => {
 					try {
@@ -85,15 +85,9 @@ const store = new Vuex.Store({
 
 						commit("setMaxPage", res.data.page_count);
 
-						//console.log(res.data);
+						console.log(res.data);
 
-						await dispatch(
-							"filterEvents",
-							res.data.events.event
-						).then((events) => {
-							//console.log(events);
-							commit("setEvents", events);
-						});
+						commit("setEvents", res.data._embedded.events);
 
 						state.events.length
 							? commit("setIsEventsNull", false)
@@ -117,7 +111,7 @@ const store = new Vuex.Store({
 			//console.log(this.state.maxPage);
 
 			if (state.searchParams.pageNumber < state.maxPage) {
-				await eventful
+				await ticketmaster
 					.loadMoreEvents()
 					.then(async (res) => {
 						//console.log(state.searchParams);
