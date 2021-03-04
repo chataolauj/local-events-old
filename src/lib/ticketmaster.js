@@ -30,14 +30,20 @@ function getEvents(searchParams) {
 }
 
 function loadMoreEvents() {
-	let { location, date, within, pageNumber } = store.state.searchParams;
+	let { coords, date, radius, pageNumber } = store.state.searchParams;
+
+	let geoPoint = geohash.encode(coords.lat, coords.lng, 9);
 
 	pageNumber++;
 
-	store.commit("setSearchParams", { location, date, within, pageNumber });
+	if (radius == null || radius == "") {
+		radius = 25;
+	}
+
+	store.commit("setSearchParams", { coords, date, radius, pageNumber });
 
 	return axios.get(
-		`${API_URL}&location=${location}&within=${within}&sort_order=relevance&sort_direction=ascending&page_number=${pageNumber}&page_size=25&date=${date}`
+		`${API_URL}&geoPoint=${geoPoint}&radius=${radius}&page=${pageNumber}`
 	);
 }
 

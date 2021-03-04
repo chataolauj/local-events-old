@@ -83,7 +83,7 @@ const store = new Vuex.Store({
 					try {
 						commit("setLoading", false);
 
-						commit("setMaxPage", res.data.page_count);
+						commit("setMaxPage", res.data.page.totalPages);
 
 						console.log(res.data);
 
@@ -104,7 +104,7 @@ const store = new Vuex.Store({
 					commit("setIsEventsNull", true);
 				});
 		},
-		async loadMoreEvents({ state, commit, dispatch }) {
+		async loadMoreEvents({ state, commit }) {
 			commit("setLoadingMore", true);
 
 			//console.log(this.state.searchParams.pageNumber);
@@ -114,19 +114,13 @@ const store = new Vuex.Store({
 				await ticketmaster
 					.loadMoreEvents()
 					.then(async (res) => {
-						//console.log(state.searchParams);
-						//console.log(res.data);
+						console.log(res.data);
 
-						await dispatch(
-							"filterEvents",
-							res.data.events.event
-						).then((events) => {
-							state.events.push(...events);
+						state.events.push(...res.data._embedded.events);
 
-							setTimeout(() => {
-								commit("setLoadingMore", false);
-							}, 2000);
-						});
+						setTimeout(() => {
+							commit("setLoadingMore", false);
+						}, 2000);
 					})
 					.catch((err) => {
 						console.log(err);

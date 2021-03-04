@@ -9,7 +9,7 @@
 					@blur="isFocused = false"
 					type="text"
 					placeholder="Search location"
-					@keyup.enter="getEvents"
+					@keyup.enter="setCoords(acResults[0])"
 					required
 				/>
 				<button

@@ -1,9 +1,5 @@
 <template>
-	<div
-		id="event-list"
-		@scroll="onScroll"
-		:class="{ 'no-scroll': loadingMore }"
-	>
+	<div id="event-list" :class="{ 'no-scroll': loadingMore }">
 		<h3
 			class="no-results"
 			v-if="!loading && !events.length && isEventsNull"
@@ -44,7 +40,9 @@
 					}}
 				</p>
 			</li>
-			<!-- <button @click="loadMoreEvents()">Load More</button> -->
+			<button class="load-more-button" @click="loadMoreEvents()">
+				Load More
+			</button>
 		</ul>
 	</div>
 </template>
@@ -67,16 +65,16 @@ export default {
 			"loadingMore",
 		]),
 	},
-	mounted() {
+	/* mounted() {
 		this.$nextTick(() => {
-			//window.addEventListener("scroll", this.onScroll);
+			window.addEventListener("scroll", this.onScroll);
 		});
 	},
 	beforeDestroy() {
 		window.removeEventListener("scroll", this.onScroll);
-	},
+	}, */
 	methods: {
-		async onScroll(el) {
+		/* async onScroll() {
 			if (
 				el.srcElement.offsetHeight + el.srcElement.scrollTop >=
 				el.srcElement.scrollHeight - 1
@@ -86,9 +84,12 @@ export default {
 
 				el.srcElement.scrollTop = position;
 			}
-		},
+		}, */
 		setActive(index) {
 			this.$store.dispatch("setActive", index);
+		},
+		loadMoreEvents() {
+			this.$store.dispatch("loadMoreEvents");
 		},
 	},
 	filters: {
@@ -180,6 +181,19 @@ $primaryThree: #e1e8f0;
 				background-color: $primaryThree;
 				color: black;
 			}
+		}
+	}
+
+	.load-more-button {
+		width: 100%;
+		padding: 10px;
+		background-color: $primaryOne;
+		border: none;
+		outline: none;
+		font-size: 1.05em;
+
+		&:hover {
+			cursor: pointer;
 		}
 	}
 
