@@ -26,7 +26,7 @@
 					aria-label="Collapse side panel"
 				></button>
 			</div>
-			<GoogleMaps />
+			<Mapbox />
 		</div>
 	</div>
 </template>
@@ -34,7 +34,7 @@
 <script>
 import Search from "./components/Search.vue";
 import EventList from "./components/EventList.vue";
-import GoogleMaps from "./components/GoogleMaps.vue";
+import Mapbox from "./components/Mapbox.vue";
 import CircleLoader from "./components/CircleLoader.vue";
 
 export default {
@@ -43,7 +43,7 @@ export default {
 		Search,
 		EventList,
 		CircleLoader,
-		GoogleMaps,
+		Mapbox,
 	},
 	data() {
 		return {
@@ -175,7 +175,7 @@ export default {
 		}
 	}
 
-	#google-map {
+	#mapbox {
 		grid-area: map;
 	}
 }
