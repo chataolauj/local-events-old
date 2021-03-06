@@ -65,26 +65,7 @@ export default {
 			"loadingMore",
 		]),
 	},
-	/* mounted() {
-		this.$nextTick(() => {
-			window.addEventListener("scroll", this.onScroll);
-		});
-	},
-	beforeDestroy() {
-		window.removeEventListener("scroll", this.onScroll);
-	}, */
 	methods: {
-		/* async onScroll() {
-			if (
-				el.srcElement.offsetHeight + el.srcElement.scrollTop >=
-				el.srcElement.scrollHeight - 1
-			) {
-				let position = el.srcElement.scrollTop;
-				await this.$store.dispatch("loadMoreEvents");
-
-				el.srcElement.scrollTop = position;
-			}
-		}, */
 		setActive(index) {
 			this.$store.dispatch("setActive", index);
 		},

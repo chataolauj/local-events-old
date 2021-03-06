@@ -89,6 +89,7 @@ export default {
 			if (this.location.length > 2 && !this.isSelected) {
 				this.searchLocation();
 			} else {
+				this.acResults = [];
 				this.isSelected = false;
 			}
 		},
