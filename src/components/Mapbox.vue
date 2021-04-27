@@ -49,6 +49,8 @@ export default {
 				}
 			}
 
+			let bounds = new mapboxgl.LngLatBounds();
+
 			for (let [index, e] of this.events.entries()) {
 				let popup = new mapboxgl.Popup({
 					className: "marker-popup",
@@ -66,7 +68,11 @@ export default {
 					.setPopup(popup)
 					.addTo(this.map);
 
+				bounds.extend(marker.getLngLat());
+
 				this.markers.push(marker);
+
+				this.map.fitBounds(bounds, { padding: 50 });
 			}
 		},
 	},
