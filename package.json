@@ -13,7 +13,7 @@
     "axios": "^0.21.1",
     "dotenv": "^8.0.0",
     "esm": "^3.2.25",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "latlon-geohash": "^2.0.0",
     "lodash": "^4.17.19",
     "mapbox-gl": "^2.1.1",
